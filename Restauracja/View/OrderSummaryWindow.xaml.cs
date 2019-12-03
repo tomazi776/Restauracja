@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Restauracja.Model;
+using Restauracja.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +22,21 @@ namespace Restauracja.View
     /// </summary>
     public partial class OrderSummaryWindow : Window
     {
-        public OrderSummaryWindow()
+        OrderSummaryViewModel summaryOrderVm;
+
+        public OrderSummaryWindow(ObservableCollection<ProductPOCO> prod, string orderRemarks)
         {
             InitializeComponent();
+
+            DataContext = summaryOrderVm = new OrderSummaryViewModel(prod, orderRemarks);
+
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = new MainWindow();
+            main.Show();
+            this.Close();
         }
     }
 }

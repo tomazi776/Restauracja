@@ -1,4 +1,5 @@
-﻿using Restauracja.ViewModel;
+﻿using Restauracja.View;
+using Restauracja.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace Restauracja
     {
 
         MenuViewModel menuVm;
+        OrderSummaryViewModel summaryOrderVm;
         public MainWindow()
         {
             InitializeComponent();
@@ -50,14 +52,24 @@ namespace Restauracja
             menuVm.GetOrderCost();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void PlaceOrder_Click(object sender, RoutedEventArgs e)
         {
+            MessageBoxResult result = MessageBox.Show("Czy na pewno chcesz złożyć to zamówienie?", "Uwaga", MessageBoxButton.YesNo);
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
 
+                    var orderProds = menuVm.OrderProducts;
+                    var orderRemarks = menuVm.OrderRemarks;
+                    Window orderWindow = new OrderSummaryWindow(orderProds, orderRemarks);
+
+                    orderWindow.Show();
+                    this.Close();
+
+                    MessageBox.Show("Teraz tylko podaj maila, w celu wysłania zamówienia, mniam!", "Zamówienie już prawie złożone!");
+                    break;
+
+            }
         }
     }
 }

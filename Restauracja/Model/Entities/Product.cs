@@ -19,15 +19,13 @@ namespace Restauracja.Model.Entities
         public int Quantity { get; set; }
         public string Remarks { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
-        public Product(int id, string name, int price, int quantity = 1, string description = "", string remarks = "")
+        public Product( string name, int price, int quantity = 1, string description = "", string remarks = "")
         {
-            Id = id;
             Name = name;
             Price = price;
             Quantity = quantity;
             Description = description;
             Remarks = remarks;
-
             this.Orders = new HashSet<Order>();
         }
 

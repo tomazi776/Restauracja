@@ -16,8 +16,10 @@ namespace Restauracja.Model.Entities
         public int FinalCost { get; set; }
         public string Description { get; set; }
         public virtual ICollection<Product> Products { get; set; }
-        public Order()
+        public Order(int finalCost, string description)
         {
+            FinalCost = finalCost;
+            Description = description;
             this.Products = new HashSet<Product>();
         }
     }
