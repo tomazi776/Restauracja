@@ -21,6 +21,21 @@ namespace Restauracja.ViewModel
             }
         }
 
+        private string orderRemarks;
+        public string OrderRemarks
+        {
+            get
+            {
+                return orderRemarks;
+            }
+            set
+            {
+                SetProperty(ref orderRemarks, value);
+            }
+        }
+
+        
+
         private int orderCost;
         public int OrderCost
         {
@@ -84,7 +99,7 @@ namespace Restauracja.ViewModel
             GetBeverages();
         }
 
-        public void GetOrderCost()
+        public void GetOrderCost()      // Abstract that method to other class (repetition in OrderSummaryViewModel)
         {
             int orderCost = 0;
             foreach (var prod in OrderProducts)         //Change to show summary cost from DB

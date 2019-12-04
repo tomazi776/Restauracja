@@ -7,6 +7,43 @@
         mc:Ignorable="d"
         Title="OrderSummaryWindow" Height="450" Width="800">
     <Grid>
-        
+        <ListView HorizontalAlignment="Left" ItemsSource="{Binding OrderSummaryProducts}" Height="192" Margin="171,110,0,0" VerticalAlignment="Top" Width="196">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Danie">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Cena">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Price}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Ilość">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Quantity}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Label Content="Twoje zamówienie:" HorizontalAlignment="Left" Margin="213,56,0,0" VerticalAlignment="Top" Width="114" Height="28"/>
+        <Button x:Name="BackButton" Content="Wróć" HorizontalAlignment="Left" Margin="35,30,0,0" VerticalAlignment="Top" Width="92" Height="37" Click="BackButton_Click"/>
+        <Label Content="Email odbiorcy:" HorizontalAlignment="Left" Margin="442,191,0,0" VerticalAlignment="Top" Width="115"/>
+        <TextBox x:Name="RecipentTextBox" Text="{Binding Recipent}" HorizontalAlignment="Left" Height="23" Margin="437,222,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
+        <Label Content="Twój email" HorizontalAlignment="Left" Margin="437,58,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="SenderTextBox"  Text="{Binding Sender}" HorizontalAlignment="Left" Height="23" Margin="437,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Text="{Binding OrderRemarks}" Margin="171,338,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="68" Width="196"/>
+        <Label Content="Uwagi:" HorizontalAlignment="Left" Margin="171,307,0,0" VerticalAlignment="Top" Width="119"/>
+        <Button Content="Wyślij zamówienie" Command="{Binding SendMailCommand}" HorizontalAlignment="Left" Margin="437,307,0,0" VerticalAlignment="Top" Width="120" Height="45"/>
+        <Button Content="Historia zamówień" HorizontalAlignment="Left" Margin="645,69,0,0" VerticalAlignment="Top" Width="122" Height="32"/>
+
     </Grid>
 </Window>
