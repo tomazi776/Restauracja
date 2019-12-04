@@ -31,7 +31,7 @@
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "dbo.ProductOrders",
+                "dbo.ProductOrders",  // Change to Order Products
                 c => new
                     {
                         Product_Id = c.Int(nullable: false),

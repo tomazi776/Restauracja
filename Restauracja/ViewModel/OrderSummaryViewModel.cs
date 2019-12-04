@@ -144,7 +144,7 @@ namespace Restauracja.ViewModel
                     newlyPlacedOrder.Products.Add(mappedProduct);
                 }
 
-                dbContext.Orders.Add(newlyPlacedOrder);     
+                dbContext.Orders.Add(newlyPlacedOrder);     // Wowow, coś tu sie dodaja te zamowione produkty do tablicy Product
                 dbContext.SaveChanges();
             }
         }
