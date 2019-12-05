@@ -47,6 +47,9 @@ namespace Restauracja.ViewModel
         }
 
         public List<Pizza> POCOPizzas { get; set; } = new List<Pizza>();
+
+        //public List<ProductPOCO> MyProperty { get; set; }
+
         public List<PizzaTopping> POCOPizzaToppings { get; set; } = new List<PizzaTopping>();
         public List<MainCourse> POCOMainCourses { get; set; } = new List<MainCourse>();
         public List<MainCourseSideDish> POCOMainCourseSideDishes { get; set; } = new List<MainCourseSideDish>();
@@ -91,7 +94,7 @@ namespace Restauracja.ViewModel
 
         public MenuViewModel()
         {
-            GetPizzas();
+            GetPizzas();        // Add Commands for tabs and move methods to their corresponding classes
             GetPizzaToppings();
             GetMainCourses();
             GetMainCourseSideDishes();
@@ -116,40 +119,40 @@ namespace Restauracja.ViewModel
         {
             foreach (var item in products)
             {
-                if (item.Description == "Pizza")    // Change to enum
+                switch (item.ProductType)
                 {
-                    var pocoPizza = new Pizza(item.Name, item.Price, item.Remarks, item.Description);
-                    POCOPizzas.Add(pocoPizza);
-                }
+                    case ProductType.Pizza:
+                        var newPizzaProduct = new Pizza(item.Name, item.Price, item.Remarks);
+                        POCOPizzas.Add(newPizzaProduct);
+                        break;
 
-                if (item.Description == "Pizza topping")
-                {
-                    var pocoPizzaTopping = new PizzaTopping(item.Name);
-                    POCOPizzaToppings.Add(pocoPizzaTopping);
-                }
+                    case ProductType.PizzaTopping:
+                        var pocoPizzaTopping = new PizzaTopping(item.Name);
+                        POCOPizzaToppings.Add(pocoPizzaTopping);
+                        break;
 
-                if (item.Description == "Main course")
-                {
-                    var pocoMainCourse = new MainCourse(item.Name, item.Price);
-                    POCOMainCourses.Add(pocoMainCourse);
-                }
+                    case ProductType.MainCourse:
+                        var pocoMainCourse = new MainCourse(item.Name, item.Price);
+                        POCOMainCourses.Add(pocoMainCourse);
+                        break;
 
-                if (item.Description == "Main course side dish")
-                {
-                    var pocoMainCourseSideDish = new MainCourseSideDish( item.Name, item.Price);
-                    POCOMainCourseSideDishes.Add(pocoMainCourseSideDish);
-                }
+                    case ProductType.MainCourseSideDish:
+                        var pocoMainCourseSideDish = new MainCourseSideDish(item.Name, item.Price);
+                        POCOMainCourseSideDishes.Add(pocoMainCourseSideDish);
+                        break;
 
-                if (item.Description == "Soup")
-                {
-                    var pocoSoup = new Soup(item.Name, item.Price);
-                    POCOSoups.Add(pocoSoup);
-                }
+                    case ProductType.Beverage:
+                        var pocoBeverage = new Beverage(item.Name);
+                        POCOBeverages.Add(pocoBeverage);
+                        break;
 
-                if (item.Description == "Beverage")
-                {
-                    var pocoBeverage = new Beverage(item.Name);
-                    POCOBeverages.Add(pocoBeverage);
+                    case ProductType.Soup:
+                        var pocoSoup = new Soup(item.Name, item.Price);
+                        POCOSoups.Add(pocoSoup);
+                        break;
+
+                    default:
+                        break;
                 }
             }
         }
@@ -159,7 +162,7 @@ namespace Restauracja.ViewModel
             using (var myRestaurantContext = new RestaurantDataContext())
             {
                 var query = from prod in myRestaurantContext.Products
-                            where prod.Description == "Pizza topping"
+                            where prod.ProductType == ProductType.PizzaTopping
                             select prod;
                 CreatePOCOProducts(query.ToList());
             }
@@ -170,7 +173,7 @@ namespace Restauracja.ViewModel
             using (var myRestaurantContext = new RestaurantDataContext())
             {
                 var query = from prod in myRestaurantContext.Products
-                            where prod.Description == "Main course"
+                            where prod.ProductType == ProductType.MainCourse
                             select prod;
                 CreatePOCOProducts(query.ToList());
             }
@@ -178,8 +181,7 @@ namespace Restauracja.ViewModel
 
         public void AddSelectedProductToOrder()
         {
-
-            if (ToBeAdded != null)      // Add method to increase quantity for doubled product
+            if (ToBeAdded != null)     
             {
                 if (!OrderProducts.Contains(ToBeAdded))
                 {
@@ -206,12 +208,9 @@ namespace Restauracja.ViewModel
             using (var myRestaurantContext = new RestaurantDataContext())
             {
                 var query = from prod in myRestaurantContext.Products
-                            where prod.Description == "Pizza"
+                            where prod.ProductType == ProductType.Pizza
                             select prod;
-
                 CreatePOCOProducts(query.ToList());
-
-                var ddd = "";
             }
         }
 
@@ -220,9 +219,8 @@ namespace Restauracja.ViewModel
             using (var myRestaurantContext = new RestaurantDataContext())
             {
                 var query = from prod in myRestaurantContext.Products
-                            where prod.Description == "Main course side dish"
+                            where prod.ProductType == ProductType.MainCourseSideDish
                             select prod;
-
                 CreatePOCOProducts(query.ToList());
             }
         }
@@ -232,9 +230,8 @@ namespace Restauracja.ViewModel
             using (var myRestaurantContext = new RestaurantDataContext())
             {
                 var query = from prod in myRestaurantContext.Products
-                            where prod.Description == "Soup"
+                            where prod.ProductType == ProductType.Soup
                             select prod;
-
                 CreatePOCOProducts(query.ToList());
             }
         }
@@ -244,29 +241,39 @@ namespace Restauracja.ViewModel
             using (var myRestaurantContext = new RestaurantDataContext())
             {
                 var query = from prod in myRestaurantContext.Products
-                            where prod.Description == "Beverage"
+                            where prod.ProductType == ProductType.Beverage
                             select prod;
-
                 CreatePOCOProducts(query.ToList());
             }
         }
 
-        //private ProductPOCO GetSingleProduct()
+        //private void GetProducts(List<Product> products)
         //{
-        //    // POBIERZ Z BAZY DANYCH
 
         //    using (var myRestaurantContext = new RestaurantDataContext())
-        //    {
-        //        var query = from prod in myRestaurantContext.Products
-        //                    where prod.Id == ToBeAdded.Id
-        //                    select prod;
+            
 
-        //        var product = query.First();
-        //        var newPOCOProd = new Pizza(product.Id, product.Name, product.Price, product.Quantity,
-        //            product.Description, product.Remarks);
-        //        return newPOCOProd;
-        //    }
+        //        foreach (var item in products)
+        //        {
+        //            if (item.ProductType == ProductType.Pizza)    // Change to enum
+        //            {
+        //                var newPizzaProduct = new Pizza(item.Name, item.Price, item.Remarks);
+        //                POCOPizzas.Add(newPizzaProduct);
+        //            }
+        //            var query = from prod in myRestaurantContext.Products
+        //                        where prod.ProductType == ProductType.Pizza
+        //                        select prod;
+
+        //            //CreatePOCOProducts(query.ToList());
+        //            var pizzas = query.ToList();
+        //            foreach (var item in pizzas)
+        //            {
+        //                POCOPizzas.Add(item);
+
+        //            }
+        //        }            
         //}
+
 
         //private void UpdateProductPizzaInDb(ProductPOCO itemToBeUpdated)        // Change to update all products in an order
         //{

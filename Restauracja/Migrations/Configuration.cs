@@ -27,7 +27,7 @@
 
                 List<ProductPOCO> newPOCOProducts = new List<ProductPOCO>()
                 {
-                    new Pizza("Margheritta", 20,"Moze zawierać soje"),
+                    new Pizza("Margheritta", 20,"Sos, ser mozarella, oregano"),
                     new Pizza("Vegetariana", 22,"Bezmięsna"),
                     new Pizza("Tosca", 25,"Z oliwą z oliwek"),
                     new Pizza("Venecia", 22, "Mięsna"),
@@ -82,7 +82,7 @@
 
                 foreach (var prod in newPOCOProducts)
                 {
-                    var productEntity = new Product(prod.Name, prod.Price,
+                    var productEntity = new Product(prod.Name, prod.Price, prod.ProductType,
                     prod.Description, prod.Remarks);
 
                     dbContext.Products.Add(productEntity);

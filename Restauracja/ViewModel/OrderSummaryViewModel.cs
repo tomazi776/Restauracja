@@ -31,6 +31,16 @@ namespace Restauracja.ViewModel
             }
         }
 
+        //private Customer customer;
+        //public Customer Customer
+        //{
+        //    get { return customer; }
+        //    set
+        //    {
+        //        SetProperty(ref customer, value);
+        //    }
+        //}
+
         public OrderPOCO PlacedOrder { get; set; }
 
         private string orderRemarks;
@@ -56,13 +66,19 @@ namespace Restauracja.ViewModel
             }
         }
 
-        private string sender = "urban776@gmail.com";
+        private string sender;
         public string Sender
         {
             get { return sender; }
             set
             {
                 SetProperty(ref sender, value);
+                //if (sender != value)
+                //{
+                //    SetProperty(ref sender, value);
+                //    custId++;
+                //    Customer = new Customer(custId, Sender);
+                //}
             }
         }
 
@@ -123,7 +139,7 @@ namespace Restauracja.ViewModel
             //{
             //    smtpClient.Send(email);
             //}
-            //catch (Exception ex )
+            //catch (Exception ex)
             //{
             //    Console.WriteLine(ex.Message);
             //    throw;
@@ -136,15 +152,14 @@ namespace Restauracja.ViewModel
         {
             using (var dbContext = new RestaurantDataContext())
             {
-                custId++;
-                Customer newCustomer = new Customer(custId, Sender);
+                custId++;   // Increment only if Sender changes
+                Customer newCustomer = new Customer(custId, Sender);    // create Customer when Sender changes
+
                 Order newlyPlacedOrder = new Order(OrderCost, OrderRemarks);
 
                 newlyPlacedOrder.Customer = newCustomer;
                 newlyPlacedOrder.FinalCost = OrderCost;
                 newlyPlacedOrder.Description = OrderRemarks;
-
-
 
                 foreach (var prod in OrderSummaryProducts)
                 {
@@ -152,17 +167,8 @@ namespace Restauracja.ViewModel
                     //dbContext.OrderItems.Add(orderItem);
 
                     newlyPlacedOrder.OrderItem.Add(orderItem);
-
-                    //newlyPlacedOrder.OrderItem.Add(orderItem);
-                    //newlyPlacedOrder.Products.Add(mappedProduct);
                 }
-
                 dbContext.Orders.Add(newlyPlacedOrder);
-
-
-                //dbContext.Orders.Add(newlyPlacedOrder);     // Wowow, coś tu sie dodaja te zamowione produkty do tablicy Product
-
-
                 dbContext.SaveChanges();
             }
         }
@@ -170,8 +176,6 @@ namespace Restauracja.ViewModel
         private OrderItem MapToOrderItem(ProductPOCO pocoProduct)
         {
             return new OrderItem(pocoProduct.Name, pocoProduct.Price, pocoProduct.Quantity, pocoProduct.Description, pocoProduct.Remarks);
-
-            //return new Product(pocoProduct.Name, pocoProduct.Price, pocoProduct.Quantity, pocoProduct.Description, pocoProduct.Remarks);
         }
 
         private void ComposeEmailBody()

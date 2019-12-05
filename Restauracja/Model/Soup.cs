@@ -3,8 +3,8 @@ namespace Restauracja.Model
 {
     public class Soup : ProductPOCO
     {
-        public Soup(string name, int price, string description = "Soup", int quantity = 1, string remarks = "")
-    : base(name, price, quantity, description, remarks)
+        public Soup(string name, int price, ProductType prod_type = ProductType.Soup, string description = "", int quantity = 1, string remarks = "")
+    : base(name, price, description, remarks, prod_type, quantity)
         {
 
         }
