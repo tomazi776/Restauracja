@@ -8,19 +8,26 @@ using System.Threading.Tasks;
 
 namespace Restauracja.Model.Entities
 {
-    [Table("Customer_Order")]
+    [Table("Cust_Order")]
     public class Order
     {
         [Key]
         public int Id { get; set; }
         public int FinalCost { get; set; }
         public string Description { get; set; }
-        public virtual ICollection<Product> Products { get; set; }
-        public Order(int finalCost, string description)
+        //public string CustomerName { get; set; }  // Maybe necessary to add
+
+        public Customer Customer { get; set; }
+
+        public virtual ICollection<OrderItem> OrderItem { get; set; }   // Navigation property to OrderItem
+
+        public Order( int finalCost, string description)
         {
+            //CustomerId = cust_id;
             FinalCost = finalCost;
             Description = description;
-            this.Products = new HashSet<Product>();
+
+            this.OrderItem = new HashSet<OrderItem>();
         }
     }
 }

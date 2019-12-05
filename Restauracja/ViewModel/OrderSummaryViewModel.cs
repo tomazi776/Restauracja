@@ -18,6 +18,7 @@ namespace Restauracja.ViewModel
     {
         const string GMAIL_SMTP_HOST = "smtp.gmail.com";
         const int GMAIL_SMTP_PORT = 587;
+        private int custId;
         public ICommand SendMailCommand { get; }
 
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
@@ -135,23 +136,42 @@ namespace Restauracja.ViewModel
         {
             using (var dbContext = new RestaurantDataContext())
             {
+                custId++;
+                Customer newCustomer = new Customer(custId, Sender);
                 Order newlyPlacedOrder = new Order(OrderCost, OrderRemarks);
+
+                newlyPlacedOrder.Customer = newCustomer;
+                newlyPlacedOrder.FinalCost = OrderCost;
+                newlyPlacedOrder.Description = OrderRemarks;
+
 
 
                 foreach (var prod in OrderSummaryProducts)
                 {
-                    var mappedProduct = MapToProduct(prod);
-                    newlyPlacedOrder.Products.Add(mappedProduct);
+                    var orderItem = MapToOrderItem(prod);
+                    //dbContext.OrderItems.Add(orderItem);
+
+                    newlyPlacedOrder.OrderItem.Add(orderItem);
+
+                    //newlyPlacedOrder.OrderItem.Add(orderItem);
+                    //newlyPlacedOrder.Products.Add(mappedProduct);
                 }
 
-                dbContext.Orders.Add(newlyPlacedOrder);     // Wowow, coś tu sie dodaja te zamowione produkty do tablicy Product
+                dbContext.Orders.Add(newlyPlacedOrder);
+
+
+                //dbContext.Orders.Add(newlyPlacedOrder);     // Wowow, coś tu sie dodaja te zamowione produkty do tablicy Product
+
+
                 dbContext.SaveChanges();
             }
         }
 
-        private Product MapToProduct(ProductPOCO pocoProduct)
+        private OrderItem MapToOrderItem(ProductPOCO pocoProduct)
         {
-            return new Product(pocoProduct.Name, pocoProduct.Price, pocoProduct.Quantity, pocoProduct.Description, pocoProduct.Remarks);
+            return new OrderItem(pocoProduct.Name, pocoProduct.Price, pocoProduct.Quantity, pocoProduct.Description, pocoProduct.Remarks);
+
+            //return new Product(pocoProduct.Name, pocoProduct.Price, pocoProduct.Quantity, pocoProduct.Description, pocoProduct.Remarks);
         }
 
         private void ComposeEmailBody()

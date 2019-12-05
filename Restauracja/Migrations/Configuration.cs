@@ -24,17 +24,17 @@
 
                 // CREATE PRODUCTS
 
-                ProductPOCO margheritta = new Pizza(1,"Margheritta", 20, 1, "Z serem", "Moze zawierać soje");
-                ProductPOCO vegetariana = new Pizza(2, "Vegetariana", 22, 1, "Z serem, z fetą i pomidorami", "Bezmięsna");
-                ProductPOCO tosca = new Pizza(3, "Tosca", 25, 1, "Pizza Toskańska", "Z oliwą z oliwek");
-                ProductPOCO venecia = new Pizza(4, "Venecia", 22, 1, "Z pieczarkami i szynką parmeńską", "Mięsna");
+                ProductPOCO margheritta = new Pizza(1,"Margheritta", 20, 1, "Pizza", "Moze zawierać soje");
+                ProductPOCO vegetariana = new Pizza(2, "Vegetariana", 22, 1, "Pizza", "Bezmięsna");
+                ProductPOCO tosca = new Pizza(3, "Tosca", 25, 1, "Pizza", "Z oliwą z oliwek");
+                ProductPOCO venecia = new Pizza(4, "Venecia", 22, 1, "Pizza", "Mięsna");
 
                 ProductPOCO podwojnySer = new PizzaTopping(5,"Podwójny ser");
                 ProductPOCO salami = new PizzaTopping(6, "Salami");
                 ProductPOCO szynka = new PizzaTopping(7, "Szynka");
                 ProductPOCO pieczarki = new PizzaTopping(8, "Pieczarki");
 
-                ProductPOCO schabowyZDodatkami = new MainCourse(9, "Schabowy z frytkami/ryżem/ziemniakami", 30, "Schabowy, w zestawie: frytki, bądź ryż lub ziemniaki");
+                ProductPOCO schabowyZDodatkami = new MainCourse(9, "Schabowy z frytkami/ryżem/ziemniakami", 30);
                 ProductPOCO rybaZFrytkami = new MainCourse(10, "Ryba z frytkami", 28);
                 ProductPOCO placekWegierski = new MainCourse(11, "Placek po węgiersku", 27);
 

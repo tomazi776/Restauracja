@@ -9,7 +9,7 @@ namespace Restauracja
 {
     public class Beverage : ProductPOCO
     {
-        public Beverage(int id, string name, int price = 5, string description = "", int quantity = 1, string remarks = "")
+        public Beverage(int id, string name, int price = 5, string description = "Beverage", int quantity = 1, string remarks = "")
     : base(id, name, price, quantity, description, remarks)
         {
 
