@@ -118,37 +118,37 @@ namespace Restauracja.ViewModel
             {
                 if (item.Description == "Pizza")    // Change to enum
                 {
-                    var pocoPizza = new Pizza(item.Id, item.Name, item.Price, item.Quantity, item.Description, item.Remarks);
+                    var pocoPizza = new Pizza(item.Name, item.Price, item.Remarks, item.Description);
                     POCOPizzas.Add(pocoPizza);
                 }
 
                 if (item.Description == "Pizza topping")
                 {
-                    var pocoPizzaTopping = new PizzaTopping(item.Id, item.Name, item.Price, item.Quantity, item.Description, item.Remarks);
+                    var pocoPizzaTopping = new PizzaTopping(item.Name);
                     POCOPizzaToppings.Add(pocoPizzaTopping);
                 }
 
                 if (item.Description == "Main course")
                 {
-                    var pocoMainCourse = new MainCourse(item.Id, item.Name, item.Price, item.Description, item.Quantity, item.Remarks);
+                    var pocoMainCourse = new MainCourse(item.Name, item.Price);
                     POCOMainCourses.Add(pocoMainCourse);
                 }
 
                 if (item.Description == "Main course side dish")
                 {
-                    var pocoMainCourseSideDish = new MainCourseSideDish(item.Id, item.Name, item.Price, item.Description, item.Quantity, item.Remarks);
+                    var pocoMainCourseSideDish = new MainCourseSideDish( item.Name, item.Price);
                     POCOMainCourseSideDishes.Add(pocoMainCourseSideDish);
                 }
 
                 if (item.Description == "Soup")
                 {
-                    var pocoSoup = new Soup(item.Id, item.Name, item.Price, item.Description, item.Quantity, item.Remarks);
+                    var pocoSoup = new Soup(item.Name, item.Price);
                     POCOSoups.Add(pocoSoup);
                 }
 
                 if (item.Description == "Beverage")
                 {
-                    var pocoBeverage = new Beverage(item.Id, item.Name, item.Price, item.Description, item.Quantity, item.Remarks);
+                    var pocoBeverage = new Beverage(item.Name);
                     POCOBeverages.Add(pocoBeverage);
                 }
             }

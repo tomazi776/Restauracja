@@ -13,12 +13,10 @@ namespace Restauracja.Model
         public string Description { get; set; }
         public List<ProductPOCO> Products { get; set; }
 
-        //public readonly int MyProperty;
         //public OrderCategory Category { get; set; }
 
         public OrderPOCO()
         {
-            //Id = id;
             Products = new List<ProductPOCO>();
         }
 

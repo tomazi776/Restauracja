@@ -53,7 +53,6 @@
                         Name = c.String(),
                         Description = c.String(),
                         Price = c.Int(nullable: false),
-                        Quantity = c.Int(nullable: false),
                         Remarks = c.String(),
                     })
                 .PrimaryKey(t => t.Id);

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Restauracja.Model.Entities
 {
@@ -14,7 +11,6 @@ namespace Restauracja.Model.Entities
         [Key]
         public int Customer_Id { get; set; }
         public string CustomerEmail { get; set; }
-
 
         public virtual ICollection<Order> Order { get; set; }       // Navigation property to Order
         public Customer(int cust_id, string email)
