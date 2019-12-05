@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restauracja.Model.Entities
 {
@@ -14,25 +9,24 @@ namespace Restauracja.Model.Entities
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
+
+        [EnumDataType(typeof(ProductType))]
+        public ProductType ProductType { get; set; }
+
         public string Description { get; set; }
         public int Price { get; set; }
-        public int Quantity { get; set; }
         public string Remarks { get; set; }
 
 
-        public Product( string name, int price, int quantity = 1, string description = "", string remarks = "")
+        public Product(string name, int price, ProductType prod_type, string description = "", string remarks = "")
         {
             Name = name;
             Price = price;
-            //Quantity = quantity;
+            ProductType = prod_type;
             Description = description;
             Remarks = remarks;
         }
 
-        public Product()
-        {
-            //this.Orders = new HashSet<Order>();
-
-        }
+        public Product() { }
     }
 }

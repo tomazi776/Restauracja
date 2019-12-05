@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Restauracja.Model
 {
     public class PizzaTopping : ProductPOCO
     {
-        public PizzaTopping(int id, string name, int price = 2, int quantity = 1, string description = "Pizza topping", string remarks = "")
-    : base(id, name, price, quantity, description, remarks)
+        public PizzaTopping(string name, int price = 2, string description = "Pizza topping", string remarks = "", ProductType prod_type = ProductType.PizzaTopping, int quantity = 1)
+    : base(name, price, description, remarks, prod_type, quantity)
         {
 
         }

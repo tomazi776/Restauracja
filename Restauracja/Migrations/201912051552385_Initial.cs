@@ -51,9 +51,9 @@
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
+                        ProductType = c.Int(nullable: false),
                         Description = c.String(),
                         Price = c.Int(nullable: false),
-                        Quantity = c.Int(nullable: false),
                         Remarks = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
