@@ -67,13 +67,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Migrations\201912051552385_Initial.cs" />
-    <Compile Include="Migrations\201912051552385_Initial.designer.cs">
-      <DependentUpon>201912051552385_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201912061039071_Initial.cs" />
+    <Compile Include="Migrations\201912061039071_Initial.designer.cs">
+      <DependentUpon>201912061039071_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Entities\Customer.cs" />
     <Compile Include="Model\Entities\OrderItem.cs" />
+    <Compile Include="Model\IProduct.cs" />
     <Compile Include="Model\MainCourseSideDish.cs" />
     <Compile Include="Model\OrderPOCO.cs" />
     <Compile Include="Model\Pizza.cs" />
@@ -83,6 +84,8 @@
     <Compile Include="Model\Soup.cs" />
     <Compile Include="RestaurantDataContext.cs" />
     <Compile Include="Utilities\CommandHandler.cs" />
+    <Compile Include="Utilities\ProductFactory.cs" />
+    <Compile Include="Utilities\SingleCustomer.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\MenuViewModel.cs" />
     <Compile Include="ViewModel\OrderSummaryViewModel.cs" />
@@ -124,8 +127,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Migrations\201912051552385_Initial.resx">
-      <DependentUpon>201912051552385_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201912061039071_Initial.resx">
+      <DependentUpon>201912061039071_Initial.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

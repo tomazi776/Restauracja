@@ -13,9 +13,8 @@ namespace Restauracja.Model.Entities
         public string CustomerEmail { get; set; }
 
         public virtual ICollection<Order> Order { get; set; }       // Navigation property to Order
-        public Customer(int cust_id, string email)
+        public Customer(string email)
         {
-            Customer_Id = cust_id;
             CustomerEmail = email;
 
             this.Order = new HashSet<Order>();

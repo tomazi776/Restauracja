@@ -1,5 +1,6 @@
 ﻿using Restauracja.Model;
 using Restauracja.Model.Entities;
+using Restauracja.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,15 +47,15 @@ namespace Restauracja.ViewModel
             }
         }
 
-        public List<Pizza> POCOPizzas { get; set; } = new List<Pizza>();
+        public List<IProduct> POCOPizzas { get; set; } = new List<IProduct>();
 
         //public List<ProductPOCO> MyProperty { get; set; }
 
-        public List<PizzaTopping> POCOPizzaToppings { get; set; } = new List<PizzaTopping>();
-        public List<MainCourse> POCOMainCourses { get; set; } = new List<MainCourse>();
-        public List<MainCourseSideDish> POCOMainCourseSideDishes { get; set; } = new List<MainCourseSideDish>();
-        public List<Soup> POCOSoups { get; set; } = new List<Soup>();
-        public List<Beverage> POCOBeverages { get; set; } = new List<Beverage>();
+        public List<IProduct> POCOPizzaToppings { get; set; } = new List<IProduct>();
+        public List<IProduct> POCOMainCourses { get; set; } = new List<IProduct>();
+        public List<IProduct> POCOMainCourseSideDishes { get; set; } = new List<IProduct>();
+        public List<IProduct> POCOSoups { get; set; } = new List<IProduct>();
+        public List<IProduct> POCOBeverages { get; set; } = new List<IProduct>();
 
         private bool tabSelected;
         public bool TabSelected     // Add loading data from db on tab selection
@@ -115,67 +116,12 @@ namespace Restauracja.ViewModel
             OrderCost = orderCost;
         }
 
-        private void CreatePOCOProducts(List<Product> products)
+        private void CreatePOCOProducts(List<Product> products, List<IProduct> pocoPrtoducts)
         {
-            foreach (var item in products)
+            ProductFactory productFactory = new ProductFactory();
+            foreach (var product in products)
             {
-                switch (item.ProductType)
-                {
-                    case ProductType.Pizza:
-                        var newPizzaProduct = new Pizza(item.Name, item.Price, item.Remarks);
-                        POCOPizzas.Add(newPizzaProduct);
-                        break;
-
-                    case ProductType.PizzaTopping:
-                        var pocoPizzaTopping = new PizzaTopping(item.Name);
-                        POCOPizzaToppings.Add(pocoPizzaTopping);
-                        break;
-
-                    case ProductType.MainCourse:
-                        var pocoMainCourse = new MainCourse(item.Name, item.Price);
-                        POCOMainCourses.Add(pocoMainCourse);
-                        break;
-
-                    case ProductType.MainCourseSideDish:
-                        var pocoMainCourseSideDish = new MainCourseSideDish(item.Name, item.Price);
-                        POCOMainCourseSideDishes.Add(pocoMainCourseSideDish);
-                        break;
-
-                    case ProductType.Beverage:
-                        var pocoBeverage = new Beverage(item.Name);
-                        POCOBeverages.Add(pocoBeverage);
-                        break;
-
-                    case ProductType.Soup:
-                        var pocoSoup = new Soup(item.Name, item.Price);
-                        POCOSoups.Add(pocoSoup);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }
-
-        private void GetPizzaToppings()
-        {
-            using (var myRestaurantContext = new RestaurantDataContext())
-            {
-                var query = from prod in myRestaurantContext.Products
-                            where prod.ProductType == ProductType.PizzaTopping
-                            select prod;
-                CreatePOCOProducts(query.ToList());
-            }
-        }
-
-        private void GetMainCourses()
-        {
-            using (var myRestaurantContext = new RestaurantDataContext())
-            {
-                var query = from prod in myRestaurantContext.Products
-                            where prod.ProductType == ProductType.MainCourse
-                            select prod;
-                CreatePOCOProducts(query.ToList());
+                pocoPrtoducts.Add(productFactory.CreatePOCOProduct(product));
             }
         }
 
@@ -203,6 +149,8 @@ namespace Restauracja.ViewModel
             }
         }
 
+
+
         private void GetPizzas()
         {
             using (var myRestaurantContext = new RestaurantDataContext())
@@ -210,7 +158,29 @@ namespace Restauracja.ViewModel
                 var query = from prod in myRestaurantContext.Products
                             where prod.ProductType == ProductType.Pizza
                             select prod;
-                CreatePOCOProducts(query.ToList());
+                CreatePOCOProducts(query.ToList(), POCOPizzas);
+            }
+        }
+
+        private void GetPizzaToppings()
+        {
+            using (var myRestaurantContext = new RestaurantDataContext())
+            {
+                var query = from prod in myRestaurantContext.Products
+                            where prod.ProductType == ProductType.PizzaTopping
+                            select prod;
+                CreatePOCOProducts(query.ToList(), POCOPizzaToppings);
+            }
+        }
+
+        private void GetMainCourses()
+        {
+            using (var myRestaurantContext = new RestaurantDataContext())
+            {
+                var query = from prod in myRestaurantContext.Products
+                            where prod.ProductType == ProductType.MainCourse
+                            select prod;
+                CreatePOCOProducts(query.ToList(), POCOMainCourses);
             }
         }
 
@@ -221,7 +191,7 @@ namespace Restauracja.ViewModel
                 var query = from prod in myRestaurantContext.Products
                             where prod.ProductType == ProductType.MainCourseSideDish
                             select prod;
-                CreatePOCOProducts(query.ToList());
+                CreatePOCOProducts(query.ToList(), POCOMainCourseSideDishes);
             }
         }
 
@@ -232,7 +202,7 @@ namespace Restauracja.ViewModel
                 var query = from prod in myRestaurantContext.Products
                             where prod.ProductType == ProductType.Soup
                             select prod;
-                CreatePOCOProducts(query.ToList());
+                CreatePOCOProducts(query.ToList(), POCOSoups);
             }
         }
 
@@ -243,7 +213,7 @@ namespace Restauracja.ViewModel
                 var query = from prod in myRestaurantContext.Products
                             where prod.ProductType == ProductType.Beverage
                             select prod;
-                CreatePOCOProducts(query.ToList());
+                CreatePOCOProducts(query.ToList(), POCOBeverages);
             }
         }
 

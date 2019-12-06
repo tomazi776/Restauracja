@@ -18,7 +18,6 @@ namespace Restauracja.ViewModel
     {
         const string GMAIL_SMTP_HOST = "smtp.gmail.com";
         const int GMAIL_SMTP_PORT = 587;
-        private int custId;
         public ICommand SendMailCommand { get; }
 
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
@@ -73,12 +72,13 @@ namespace Restauracja.ViewModel
             set
             {
                 SetProperty(ref sender, value);
-                //if (sender != value)
+                SingleCustomer.GetInstance().Email = sender;
+
+                //if (IsAlreadyClient(sender, out int clientId))
                 //{
-                //    SetProperty(ref sender, value);
-                //    custId++;
-                //    Customer = new Customer(custId, Sender);
+                //    SingleCustomer.GetInstance().Id = clientId;
                 //}
+                //SingleCustomer.GetInstance().Email = sender;
             }
         }
 
@@ -118,11 +118,10 @@ namespace Restauracja.ViewModel
         {
             OrderSummaryProducts = products;
             OrderRemarks = remarks;
+            Sender = SingleCustomer.GetInstance().Email;
 
             SendMailCommand = new CommandHandler(SendMail, () => true);
         }
-
-
 
         public void SendMail()
         {
@@ -152,9 +151,7 @@ namespace Restauracja.ViewModel
         {
             using (var dbContext = new RestaurantDataContext())
             {
-                custId++;   // Increment only if Sender changes
-                Customer newCustomer = new Customer(custId, Sender);    // create Customer when Sender changes
-
+                Customer newCustomer = new Customer(Sender);    // create Customer when Sender changes
                 Order newlyPlacedOrder = new Order(OrderCost, OrderRemarks);
 
                 newlyPlacedOrder.Customer = newCustomer;
@@ -165,7 +162,6 @@ namespace Restauracja.ViewModel
                 {
                     var orderItem = MapToOrderItem(prod);
                     //dbContext.OrderItems.Add(orderItem);
-
                     newlyPlacedOrder.OrderItem.Add(orderItem);
                 }
                 dbContext.Orders.Add(newlyPlacedOrder);
@@ -202,7 +198,39 @@ namespace Restauracja.ViewModel
             OrderCost = orderCost;
         }
 
+        //private bool IsAlreadyClient(string currentEmail, out int clientId)
+        //{
+        //    clientId = 0;
+        //    using (var myRestaurantContext = new RestaurantDataContext())
+        //    {
+        //        var matchingClientId = (from customer in myRestaurantContext.Customers
+        //                                where customer.CustomerEmail == currentEmail
+        //                                select customer.Customer_Id).SingleOrDefault();
 
+        //        var clientEmail = (from cust in myRestaurantContext.Customers
+        //                           where cust.CustomerEmail == currentEmail
+        //                           select cust.CustomerEmail).First();
+
+        //        clientId = matchingClientId;
+        //        return (clientEmail == currentEmail);
+        //    }
+        //}
+
+        //private bool IsAlreadyClient(string currentEmail)
+        //{
+        //    using (var myRestaurantContext = new RestaurantDataContext())
+        //    {
+        //        //var matchingClientId = (from customer in myRestaurantContext.Customers
+        //        //                        where customer.CustomerEmail == currentEmail
+        //        //                        select customer.Customer_Id).SingleOrDefault();
+
+        //        var clientEmail = (from cust in myRestaurantContext.Customers
+        //                           where cust.CustomerEmail == currentEmail
+        //                           select cust.CustomerEmail).First();
+
+        //        return (clientEmail == currentEmail);
+        //    }
+        //}
         private static string GetHashString(string inputString)
         {
             StringBuilder sb = new StringBuilder();
