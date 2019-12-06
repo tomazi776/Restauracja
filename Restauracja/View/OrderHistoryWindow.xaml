@@ -1,0 +1,94 @@
+﻿<Window x:Class="Restauracja.View.OrderHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Restauracja.View"
+        mc:Ignorable="d"
+        Title="OrderHistoryWindow" Height="600" Width="900">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+    <Grid>
+        <Label Content="Order History:" HorizontalAlignment="Left" Margin="320,35,0,0" VerticalAlignment="Top" Height="44" Width="162" FontSize="24"/>
+
+        <Button Content="Wróć" HorizontalAlignment="Left" Margin="52,42,0,0" VerticalAlignment="Top" Width="105" Height="37" Click="BackButton_Click"/>
+        <ListView Name="OrderHistoryListView" ItemsSource="{Binding Orders}" SelectedItem="{Binding Order}" HorizontalAlignment="Left" Height="147" Margin="52,114,0,0" VerticalAlignment="Top" Width="783">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Klient">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding CustomerName}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Szczegóły">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Description}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Cena">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding FinalCost}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Data zamówienia">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Date, StringFormat='{}{0:MM/dd/yyyy \\o h:mm tt}'}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView Name="OrderProductsListview" ItemsSource="{Binding OrderItems}" HorizontalAlignment="Left" Height="255" Margin="284,289,0,0" VerticalAlignment="Top" Width="551">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Danie">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Cena">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Price}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Ilość">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Quantity}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Dodatki">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Additions}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Ilość dodatków">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding AdditionsQuantity}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button Content="Wyświetl szczegóły" Command="{Binding SelectOrderCommand}" Visibility="{Binding Path=ItemSelected, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left" Margin="96,372,0,0" VerticalAlignment="Top" Width="129" Height="73" Cursor="Hand"/>
+
+    </Grid>
+</Window>

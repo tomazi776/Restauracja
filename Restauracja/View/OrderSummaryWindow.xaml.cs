@@ -24,7 +24,7 @@ namespace Restauracja.View
     {
         OrderSummaryViewModel summaryOrderVm;
 
-        public OrderSummaryWindow(ObservableCollection<ProductPOCO> prod, string orderRemarks)
+        public OrderSummaryWindow(ObservableCollection<ProductPOCO> prod = null, string orderRemarks = "")
         {
             InitializeComponent();
 
@@ -37,6 +37,14 @@ namespace Restauracja.View
             MainWindow main = new MainWindow();
             main.Show();
             this.Close();
+        }
+
+        private void OrderHistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            Window orderHistoryWindow = new OrderHistoryWindow();
+            orderHistoryWindow.Show();
+            this.Close();
+
         }
     }
 }

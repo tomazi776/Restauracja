@@ -152,7 +152,7 @@ namespace Restauracja.ViewModel
             using (var dbContext = new RestaurantDataContext())
             {
                 Customer newCustomer = new Customer(Sender);    // create Customer when Sender changes
-                Order newlyPlacedOrder = new Order(OrderCost, OrderRemarks);
+                Order newlyPlacedOrder = new Order(OrderCost, OrderRemarks, DateTime.Now);
 
                 newlyPlacedOrder.Customer = newCustomer;
                 newlyPlacedOrder.FinalCost = OrderCost;

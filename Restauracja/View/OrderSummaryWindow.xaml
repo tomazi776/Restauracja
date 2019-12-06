@@ -43,7 +43,7 @@
         <TextBlock HorizontalAlignment="Left" Text="{Binding OrderRemarks}" Margin="171,338,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="68" Width="196"/>
         <Label Content="Uwagi:" HorizontalAlignment="Left" Margin="171,307,0,0" VerticalAlignment="Top" Width="119"/>
         <Button Content="Wyślij zamówienie" Command="{Binding SendMailCommand}" HorizontalAlignment="Left" Margin="437,307,0,0" VerticalAlignment="Top" Width="120" Height="45"/>
-        <Button Content="Historia zamówień" HorizontalAlignment="Left" Margin="645,69,0,0" VerticalAlignment="Top" Width="122" Height="32"/>
+        <Button Content="Historia zamówień" HorizontalAlignment="Left" Margin="645,69,0,0" VerticalAlignment="Top" Width="122" Height="32" Click="OrderHistoryButton_Click"/>
 
     </Grid>
 </Window>

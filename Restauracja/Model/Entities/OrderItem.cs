@@ -29,5 +29,10 @@ namespace Restauracja.Model.Entities
             Remarks = remarks;
             Description = description;
         }
+
+        public OrderItem()
+        {
+
+        }
     }
 }
