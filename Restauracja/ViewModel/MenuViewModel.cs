@@ -5,13 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restauracja.ViewModel
 {
     public class MenuViewModel : BaseViewModel
     {
+        public const string WELCOME_MESSAGE_HEADER = "Zamówienie już prawie złożone!";
+        public const string WELCOME_MESSAGE_CONTENT = "Teraz tylko podaj maila, w celu wysłania zamówienia, mniam!";
+        public const string CONFIRMATION_PROMPT_CONTENT = "Czy na pewno chcesz złożyć to zamówienie?";
+        public const string CONFIRMATION_PROMPT_HEADER = "Uwaga";
+
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         public ObservableCollection<ProductPOCO> OrderProducts
         {
@@ -35,8 +38,6 @@ namespace Restauracja.ViewModel
             }
         }
 
-        
-
         private int orderCost;
         public int OrderCost
         {
@@ -48,24 +49,11 @@ namespace Restauracja.ViewModel
         }
 
         public List<IProduct> POCOPizzas { get; set; } = new List<IProduct>();
-
-        //public List<ProductPOCO> MyProperty { get; set; }
-
         public List<IProduct> POCOPizzaToppings { get; set; } = new List<IProduct>();
         public List<IProduct> POCOMainCourses { get; set; } = new List<IProduct>();
         public List<IProduct> POCOMainCourseSideDishes { get; set; } = new List<IProduct>();
         public List<IProduct> POCOSoups { get; set; } = new List<IProduct>();
         public List<IProduct> POCOBeverages { get; set; } = new List<IProduct>();
-
-        private bool tabSelected;
-        public bool TabSelected     // Add loading data from db on tab selection
-        {
-            get { return tabSelected; }
-            set
-            {
-                SetProperty(ref tabSelected, value);
-            }
-        }
 
         private ProductPOCO toBeAdded;
         public ProductPOCO ToBeAdded
@@ -95,18 +83,18 @@ namespace Restauracja.ViewModel
 
         public MenuViewModel()
         {
-            GetPizzas();        // Add Commands for tabs and move methods to their corresponding classes
-            GetPizzaToppings();
-            GetMainCourses();
-            GetMainCourseSideDishes();
-            GetSoups();
-            GetBeverages();
+            GetProducts(ProductType.Pizza, POCOPizzas);
+            GetProducts(ProductType.PizzaTopping, POCOPizzaToppings);
+            GetProducts(ProductType.MainCourse, POCOMainCourses);
+            GetProducts(ProductType.MainCourseSideDish, POCOMainCourseSideDishes);
+            GetProducts(ProductType.Soup, POCOSoups);
+            GetProducts(ProductType.Beverage, POCOBeverages);
         }
 
-        public void GetOrderCost()      // Abstract that method to other class (repetition in OrderSummaryViewModel)
+        public void GetOrderCost()
         {
             int orderCost = 0;
-            foreach (var prod in OrderProducts)         //Change to show summary cost from DB
+            foreach (var prod in OrderProducts)
             {
                 for (int i = 0; i < prod.Quantity; i++)
                 {
@@ -149,112 +137,15 @@ namespace Restauracja.ViewModel
             }
         }
 
-
-
-        private void GetPizzas()
+        private void GetProducts(ProductType productType, List<IProduct> products)
         {
             using (var myRestaurantContext = new RestaurantDataContext())
             {
                 var query = from prod in myRestaurantContext.Products
-                            where prod.ProductType == ProductType.Pizza
+                            where prod.ProductType == productType
                             select prod;
-                CreatePOCOProducts(query.ToList(), POCOPizzas);
+                CreatePOCOProducts(query.ToList(), products);
             }
         }
-
-        private void GetPizzaToppings()
-        {
-            using (var myRestaurantContext = new RestaurantDataContext())
-            {
-                var query = from prod in myRestaurantContext.Products
-                            where prod.ProductType == ProductType.PizzaTopping
-                            select prod;
-                CreatePOCOProducts(query.ToList(), POCOPizzaToppings);
-            }
-        }
-
-        private void GetMainCourses()
-        {
-            using (var myRestaurantContext = new RestaurantDataContext())
-            {
-                var query = from prod in myRestaurantContext.Products
-                            where prod.ProductType == ProductType.MainCourse
-                            select prod;
-                CreatePOCOProducts(query.ToList(), POCOMainCourses);
-            }
-        }
-
-        private void GetMainCourseSideDishes()
-        {
-            using (var myRestaurantContext = new RestaurantDataContext())
-            {
-                var query = from prod in myRestaurantContext.Products
-                            where prod.ProductType == ProductType.MainCourseSideDish
-                            select prod;
-                CreatePOCOProducts(query.ToList(), POCOMainCourseSideDishes);
-            }
-        }
-
-        private void GetSoups()
-        {
-            using (var myRestaurantContext = new RestaurantDataContext())
-            {
-                var query = from prod in myRestaurantContext.Products
-                            where prod.ProductType == ProductType.Soup
-                            select prod;
-                CreatePOCOProducts(query.ToList(), POCOSoups);
-            }
-        }
-
-        private void GetBeverages()
-        {
-            using (var myRestaurantContext = new RestaurantDataContext())
-            {
-                var query = from prod in myRestaurantContext.Products
-                            where prod.ProductType == ProductType.Beverage
-                            select prod;
-                CreatePOCOProducts(query.ToList(), POCOBeverages);
-            }
-        }
-
-        //private void GetProducts(List<Product> products)
-        //{
-
-        //    using (var myRestaurantContext = new RestaurantDataContext())
-            
-
-        //        foreach (var item in products)
-        //        {
-        //            if (item.ProductType == ProductType.Pizza)    // Change to enum
-        //            {
-        //                var newPizzaProduct = new Pizza(item.Name, item.Price, item.Remarks);
-        //                POCOPizzas.Add(newPizzaProduct);
-        //            }
-        //            var query = from prod in myRestaurantContext.Products
-        //                        where prod.ProductType == ProductType.Pizza
-        //                        select prod;
-
-        //            //CreatePOCOProducts(query.ToList());
-        //            var pizzas = query.ToList();
-        //            foreach (var item in pizzas)
-        //            {
-        //                POCOPizzas.Add(item);
-
-        //            }
-        //        }            
-        //}
-
-
-        //private void UpdateProductPizzaInDb(ProductPOCO itemToBeUpdated)        // Change to update all products in an order
-        //{
-        //    var dbItem = new Product(itemToBeUpdated.Id, itemToBeUpdated.Name, itemToBeUpdated.Price, 
-        //        itemToBeUpdated.Quantity, itemToBeUpdated.Description, itemToBeUpdated.Remarks);
-
-        //    using (var myRestaurantContext = new RestaurantDataContext())
-        //    {
-        //        myRestaurantContext.Entry(dbItem).State = EntityState.Modified;
-        //        myRestaurantContext.SaveChanges();
-        //    }
-        //}
     }
 }

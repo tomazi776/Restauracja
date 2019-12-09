@@ -1,12 +1,9 @@
 ﻿using Restauracja.Model;
 using Restauracja.Model.Entities;
 using Restauracja.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Restauracja.ViewModel
@@ -14,7 +11,6 @@ namespace Restauracja.ViewModel
     public class OrderHistoryViewModel : BaseViewModel
     {
         public ICommand SelectOrderCommand { get; }
-
         public List<FullOrderInfo> Orders { get; set; } = new List<FullOrderInfo>();
 
         private ObservableCollection<OrderItem> orderItems = new ObservableCollection<OrderItem>();
@@ -26,8 +22,6 @@ namespace Restauracja.ViewModel
                 SetProperty(ref orderItems, value);
             }
         }
-
-        //public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
         private bool detailsDisplayed;
         public bool DetailsDisplayed
@@ -46,8 +40,6 @@ namespace Restauracja.ViewModel
             set
             {
                 SetProperty(ref itemSelected, value);
-                //SetProperty(ref detailsDisplayed, value);   //swieze
-
                 RaisePropertyChanged(nameof(DetailsDisplayed));
             }
         }
@@ -59,21 +51,16 @@ namespace Restauracja.ViewModel
             set
             {
                 SetProperty(ref order, value);
-
                 SetProperty(ref itemSelected, true);
-                SetProperty(ref detailsDisplayed, false);   //swieze
-
+                SetProperty(ref detailsDisplayed, false);
                 RaisePropertyChanged(nameof(ItemSelected));
-
                 OrderItems.Clear();
             }
         }
         public OrderHistoryViewModel()
         {
             GetOrderHistory();
-
             SelectOrderCommand = new CommandHandler(SelectOrder, () => true);
-
         }
 
         private void SelectOrder()
@@ -89,12 +76,10 @@ namespace Restauracja.ViewModel
         {
             using (var dbContext = new RestaurantDataContext())
             {
-                var query = from ord in dbContext.Orders
-                            join cust in dbContext.Customers on ord.Id equals cust.Customer_Id
-                            select new FullOrderInfo{CustomerName = cust.CustomerEmail, Date = ord.Date, FinalCost = ord.FinalCost, Description = ord.Description };
-
+                var query = from order in dbContext.Orders
+                            join customer in dbContext.Customers on order.Id equals customer.Customer_Id
+                            select new FullOrderInfo{CustomerName = customer.CustomerEmail, Date = order.Date, FinalCost = order.FinalCost, Description = order.Description };
                 Orders = query.ToList();
-                var ddd = "sssss";
             }
         }
 

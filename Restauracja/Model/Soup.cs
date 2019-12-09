@@ -1,5 +1,4 @@
-﻿
-namespace Restauracja.Model
+﻿namespace Restauracja.Model
 {
     public class Soup : ProductPOCO, IProduct
     {

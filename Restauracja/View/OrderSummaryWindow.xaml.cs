@@ -1,4 +1,5 @@
 ﻿using Restauracja.Model;
+using Restauracja.Utilities;
 using Restauracja.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -23,13 +24,10 @@ namespace Restauracja.View
     public partial class OrderSummaryWindow : Window
     {
         OrderSummaryViewModel summaryOrderVm;
-
         public OrderSummaryWindow(ObservableCollection<ProductPOCO> prod = null, string orderRemarks = "")
         {
             InitializeComponent();
-
             DataContext = summaryOrderVm = new OrderSummaryViewModel(prod, orderRemarks);
-
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -44,7 +42,11 @@ namespace Restauracja.View
             Window orderHistoryWindow = new OrderHistoryWindow();
             orderHistoryWindow.Show();
             this.Close();
+        }
 
+        private void RecipentTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            summaryOrderVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
         }
     }
 }

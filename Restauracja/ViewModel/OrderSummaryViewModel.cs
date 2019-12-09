@@ -2,20 +2,16 @@
 using Restauracja.Model.Entities;
 using Restauracja.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Restauracja.ViewModel
 {
     public class OrderSummaryViewModel : BaseViewModel
     {
+        const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
         const string GMAIL_SMTP_HOST = "smtp.gmail.com";
         const int GMAIL_SMTP_PORT = 587;
         public ICommand SendMailCommand { get; }
@@ -30,15 +26,15 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //private Customer customer;
-        //public Customer Customer
-        //{
-        //    get { return customer; }
-        //    set
-        //    {
-        //        SetProperty(ref customer, value);
-        //    }
-        //}
+        private bool sendEnabled;
+        public bool SendEnabled
+        {
+            get { return sendEnabled; }
+            set 
+            {
+                SetProperty(ref sendEnabled, value);
+            }
+        }
 
         public OrderPOCO PlacedOrder { get; set; }
 
@@ -73,23 +69,16 @@ namespace Restauracja.ViewModel
             {
                 SetProperty(ref sender, value);
                 SingleCustomer.GetInstance().Email = sender;
-
-                //if (IsAlreadyClient(sender, out int clientId))
-                //{
-                //    SingleCustomer.GetInstance().Id = clientId;
-                //}
-                //SingleCustomer.GetInstance().Email = sender;
             }
         }
 
-
-        private string subject;
-        public string Subject
+        private string passPhrase;
+        public string PassPhrase
         {
-            get { return subject; }
+            get { return passPhrase; }
             set
             {
-                SetProperty(ref subject, value);
+                SetProperty(ref passPhrase, value); 
             }
         }
 
@@ -113,13 +102,11 @@ namespace Restauracja.ViewModel
             }
         }
 
-
         public OrderSummaryViewModel(ObservableCollection<ProductPOCO> products, string remarks)
         {
             OrderSummaryProducts = products;
             OrderRemarks = remarks;
             Sender = SingleCustomer.GetInstance().Email;
-
             SendMailCommand = new CommandHandler(SendMail, () => true);
         }
 
@@ -127,31 +114,32 @@ namespace Restauracja.ViewModel
         {
             GetOrderCost();
             SaveOrderToDb();
-            //ComposeEmailBody();
+            ComposeEmailBody();
 
-            //MailMessage email = new MailMessage(Sender, Recipent, Subject, EmailBody);
-            //SmtpClient smtpClient = new SmtpClient(GMAIL_SMTP_HOST, GMAIL_SMTP_PORT);
-            //smtpClient.Credentials = new NetworkCredential(Sender, "Junior77");
-            //smtpClient.EnableSsl = true;
-            //smtpClient.Timeout = 10000;
-            //try
-            //{
-            //    smtpClient.Send(email);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //    throw;
-            //}
-
-            // Dodaj info o wysłaniu zamówienia
+            MailMessage email = new MailMessage(Sender, Recipent, EMAIL_SUBJECT, EmailBody);
+            SmtpClient smtpClient = new SmtpClient(GMAIL_SMTP_HOST, GMAIL_SMTP_PORT);
+            if (Sender != null && PassPhrase != null)
+            {
+                smtpClient.Credentials = new NetworkCredential(Sender, PassPhrase);
+            }
+            smtpClient.EnableSsl = true;
+            smtpClient.Timeout = 10000;
+            try
+            {
+                smtpClient.Send(email);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 
         private void SaveOrderToDb()
         {
             using (var dbContext = new RestaurantDataContext())
             {
-                Customer newCustomer = new Customer(Sender);    // create Customer when Sender changes
+                Customer newCustomer = new Customer(Sender);
                 Order newlyPlacedOrder = new Order(OrderCost, OrderRemarks, DateTime.Now);
 
                 newlyPlacedOrder.Customer = newCustomer;
@@ -161,7 +149,6 @@ namespace Restauracja.ViewModel
                 foreach (var prod in OrderSummaryProducts)
                 {
                     var orderItem = MapToOrderItem(prod);
-                    //dbContext.OrderItems.Add(orderItem);
                     newlyPlacedOrder.OrderItem.Add(orderItem);
                 }
                 dbContext.Orders.Add(newlyPlacedOrder);
@@ -185,10 +172,10 @@ namespace Restauracja.ViewModel
             EmailBody += "\n" + "\n" + "Uwagi do zamówienia: " + OrderRemarks;
         }
 
-        private void GetOrderCost()      // Abstract that method to other class (repetition in MenuViewModel)
+        private void GetOrderCost()
         {
             int orderCost = 0;
-            foreach (var prod in OrderSummaryProducts)         //Change to show summary cost from DB
+            foreach (var prod in OrderSummaryProducts)
             {
                 for (int i = 0; i < prod.Quantity; i++)
                 {
@@ -196,54 +183,6 @@ namespace Restauracja.ViewModel
                 }
             }
             OrderCost = orderCost;
-        }
-
-        //private bool IsAlreadyClient(string currentEmail, out int clientId)
-        //{
-        //    clientId = 0;
-        //    using (var myRestaurantContext = new RestaurantDataContext())
-        //    {
-        //        var matchingClientId = (from customer in myRestaurantContext.Customers
-        //                                where customer.CustomerEmail == currentEmail
-        //                                select customer.Customer_Id).SingleOrDefault();
-
-        //        var clientEmail = (from cust in myRestaurantContext.Customers
-        //                           where cust.CustomerEmail == currentEmail
-        //                           select cust.CustomerEmail).First();
-
-        //        clientId = matchingClientId;
-        //        return (clientEmail == currentEmail);
-        //    }
-        //}
-
-        //private bool IsAlreadyClient(string currentEmail)
-        //{
-        //    using (var myRestaurantContext = new RestaurantDataContext())
-        //    {
-        //        //var matchingClientId = (from customer in myRestaurantContext.Customers
-        //        //                        where customer.CustomerEmail == currentEmail
-        //        //                        select customer.Customer_Id).SingleOrDefault();
-
-        //        var clientEmail = (from cust in myRestaurantContext.Customers
-        //                           where cust.CustomerEmail == currentEmail
-        //                           select cust.CustomerEmail).First();
-
-        //        return (clientEmail == currentEmail);
-        //    }
-        //}
-        private static string GetHashString(string inputString)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in GetHash(inputString))
-                sb.Append(b.ToString("X2"));
-
-            return sb.ToString();
-        }
-
-        private static byte[] GetHash(string inputString)
-        {
-            HashAlgorithm algorithm = SHA256.Create();
-            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
         }
     }
 }

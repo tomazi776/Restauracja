@@ -1,10 +1,5 @@
 ﻿using Restauracja.Model;
 using Restauracja.Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restauracja.Utilities
 {
@@ -16,7 +11,7 @@ namespace Restauracja.Utilities
             switch (product.ProductType)
             {
                 case ProductType.Pizza:
-                    pocoProduct = new Pizza(product.Name, product.Price, product.Remarks);      // Can add decorator to add additions and toppings
+                    pocoProduct = new Pizza(product.Name, product.Price, product.Remarks);
                     break;
 
                 case ProductType.PizzaTopping:

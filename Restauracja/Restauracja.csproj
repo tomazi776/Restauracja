@@ -85,6 +85,7 @@
     <Compile Include="Model\Soup.cs" />
     <Compile Include="RestaurantDataContext.cs" />
     <Compile Include="Utilities\CommandHandler.cs" />
+    <Compile Include="Utilities\EmailValidator.cs" />
     <Compile Include="Utilities\ProductFactory.cs" />
     <Compile Include="Utilities\SingleCustomer.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
