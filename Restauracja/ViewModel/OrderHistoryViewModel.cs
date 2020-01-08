@@ -78,7 +78,7 @@ namespace Restauracja.ViewModel
             {
                 var query = from order in dbContext.Orders
                             join customer in dbContext.Customers on order.Id equals customer.Customer_Id
-                            select new FullOrderInfo{CustomerName = customer.CustomerEmail, Date = order.Date, FinalCost = order.FinalCost, Description = order.Description };
+                            select new FullOrderInfo{Id = customer.Customer_Id, CustomerName = customer.CustomerEmail, Date = order.Date, FinalCost = order.FinalCost, Description = order.Description };
                 Orders = query.ToList();
             }
         }
@@ -89,6 +89,7 @@ namespace Restauracja.ViewModel
             {
                 var query = from item in dbContext.OrderItems
                             where item.Order.Customer.CustomerEmail == customerEmail
+                            where item.OrderId == Order.Id
                             select item;
                 var orderItemsList = query.ToList();
 

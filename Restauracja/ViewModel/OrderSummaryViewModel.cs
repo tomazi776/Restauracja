@@ -166,7 +166,7 @@ namespace Restauracja.ViewModel
             EmailBody = "Zamówienie klienta '" + Sender + "':" + "\n";
             foreach (var product in OrderSummaryProducts)
             {
-                EmailBody += "\n" + product.Name + " - " + product.Price.ToString() + " zł";
+                EmailBody += "\n" + product.Name + " - " + product.Price.ToString() + "zł x " + product.Quantity +  " = " + product.Quantity * product.Price + " zł";
             }
             EmailBody += "\n" + "\n" + "Łączny koszt zamówienia: " + OrderCost + " zł";
             EmailBody += "\n" + "\n" + "Uwagi do zamówienia: " + OrderRemarks;
