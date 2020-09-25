@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Restauracja.Model
 {
@@ -11,6 +12,19 @@ namespace Restauracja.Model
         public OrderPOCO()
         {
             Products = new List<ProductPOCO>();
+        }
+
+        public int GetOrderCost<ProductPOCO>(ObservableCollection<Model.ProductPOCO> orderSummaryProducts)
+        {
+            int orderCost = 0;
+            foreach (var prod in orderSummaryProducts)
+            {
+                for (int i = 0; i < prod.Quantity; i++)
+                {
+                    orderCost += prod.Price;
+                }
+            }
+            return orderCost;
         }
     }
 }

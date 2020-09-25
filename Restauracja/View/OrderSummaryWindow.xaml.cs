@@ -24,16 +24,16 @@ namespace Restauracja.View
     public partial class OrderSummaryWindow : Window
     {
         OrderSummaryViewModel summaryOrderVm;
-        public OrderSummaryWindow(ObservableCollection<ProductPOCO> prod = null, string orderRemarks = "")
+        public OrderSummaryWindow()
         {
             InitializeComponent();
-            DataContext = summaryOrderVm = new OrderSummaryViewModel(prod, orderRemarks);
+            //DataContext = summaryOrderVm = new OrderSummaryViewModel();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow main = new MainWindow();
-            main.Show();
+            //MainWindow main = new MainWindow();
+            //main.Show();
             this.Close();
         }
 
@@ -41,12 +41,20 @@ namespace Restauracja.View
         {
             Window orderHistoryWindow = new OrderHistoryWindow();
             orderHistoryWindow.Show();
-            this.Close();
+            //this.Close();
         }
 
         private void RecipentTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            summaryOrderVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
+            //summaryOrderVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
+            var viewModel = this.DataContext;
+
+            var orderSummaryVm = viewModel as OrderSummaryViewModel;
+            if (orderSummaryVm != null)
+            {
+                orderSummaryVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
+            }
+
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Restauracja.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
 
+
         protected void RaisePropertiesChanged(params string[] propertyNames)
         {
             if (propertyNames == null)

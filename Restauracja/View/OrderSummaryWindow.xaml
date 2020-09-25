@@ -5,9 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Restauracja.View"
         mc:Ignorable="d"
-        Title="OrderSummaryWindow" Height="600" Width="900">
+        Title="OrderSummaryWindow" Height="600" Width="900"
+        >
+    
     <Grid>
-        <ListView HorizontalAlignment="Left" ItemsSource="{Binding OrderSummaryProducts}" Height="242" Margin="171,110,0,0" VerticalAlignment="Top" Width="238">
+        <ListView HorizontalAlignment="Left" ItemsSource="{Binding OrderSummaryProducts, Mode=TwoWay}" Height="242" Margin="171,110,0,0" VerticalAlignment="Top" Width="238">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Danie">

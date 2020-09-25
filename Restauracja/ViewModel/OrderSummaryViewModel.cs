@@ -1,11 +1,14 @@
-﻿using Restauracja.Model;
+﻿using Prism.Events;
+using Restauracja.Model;
 using Restauracja.Model.Entities;
 using Restauracja.Utilities;
 using System;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Windows.Input;
+using static Restauracja.ViewModel.MenuViewModel;
 
 namespace Restauracja.ViewModel
 {
@@ -13,6 +16,11 @@ namespace Restauracja.ViewModel
     {
         const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
         const string GMAIL_SMTP_HOST = "smtp.gmail.com";
+        const string CLIENT_ORDER_TEXT = "Zamówienie klienta '";
+        const string ORDER_COST_TEXT = "Łączny koszt zamówienia: ";
+        const string ORDER_REMARKS_TEXT = "Uwagi do zamówienia: ";
+        const string DOUBLE_LINE_BREAK = "\r\n\r\n";
+        const string SUMMARYLINE = "_______________________________";
         const int GMAIL_SMTP_PORT = 587;
         public ICommand SendMailCommand { get; }
 
@@ -22,7 +30,10 @@ namespace Restauracja.ViewModel
             get { return orderProducts; }
             set
             {
-                SetProperty(ref orderProducts, value);
+                if (orderProducts != value)
+                {
+                    SetProperty(ref orderProducts, value);
+                }
             }
         }
 
@@ -36,7 +47,7 @@ namespace Restauracja.ViewModel
             }
         }
 
-        public OrderPOCO PlacedOrder { get; set; }
+        //public OrderPOCO PlacedOrder { get; set; }
 
         private string orderRemarks;
         public string OrderRemarks
@@ -102,17 +113,40 @@ namespace Restauracja.ViewModel
             }
         }
 
-        public OrderSummaryViewModel(ObservableCollection<ProductPOCO> products, string remarks)
+        public OrderSummaryViewModel(IEventAggregator eventAggregator) // IEventAggregator eventAggregator in ctor
         {
-            OrderSummaryProducts = products;
-            OrderRemarks = remarks;
+            //OrderSummaryProducts = products;
+            //OrderRemarks = remarks;
+            //OrderSummaryProducts = products;
+
             Sender = SingleCustomer.GetInstance().Email;
             SendMailCommand = new CommandHandler(SendMail, () => true);
+
+            eventAggregator.GetEvent<ProductsPOCOMessageSentEvent>().Subscribe(ProductsMessageReceived);
+            eventAggregator.GetEvent<ProductRemarksMessageSentEvent>().Subscribe(ProductRemarksMessageReceived);
+        }
+
+        //public void OnOrderPlaced(object source, OrderProductsEventArgs e)
+        //{
+        //    OrderSummaryProducts = e?.OrderProducts;
+        //}
+
+        private void ProductRemarksMessageReceived(string obj)
+        {
+            OrderRemarks = obj;
+        }
+
+        private void ProductsMessageReceived(ObservableCollection<ProductPOCO> obj)
+        {
+            OrderSummaryProducts = obj;
         }
 
         public void SendMail()
         {
-            GetOrderCost();
+            OrderPOCO order = new OrderPOCO();
+            OrderCost = order.GetOrderCost<ProductPOCO>(OrderSummaryProducts);
+
+            //GetOrderCost();
             SaveOrderToDb();
             ComposeEmailBody();
 
@@ -120,6 +154,7 @@ namespace Restauracja.ViewModel
             SmtpClient smtpClient = new SmtpClient(GMAIL_SMTP_HOST, GMAIL_SMTP_PORT);
             if (Sender != null && PassPhrase != null)
             {
+                smtpClient.UseDefaultCredentials = true;
                 smtpClient.Credentials = new NetworkCredential(Sender, PassPhrase);
             }
             smtpClient.EnableSsl = true;
@@ -163,26 +198,29 @@ namespace Restauracja.ViewModel
 
         private void ComposeEmailBody()
         {
-            EmailBody = "Zamówienie klienta '" + Sender + "':" + "\n";
+            StringBuilder orderContent = new StringBuilder();
             foreach (var product in OrderSummaryProducts)
             {
-                EmailBody += "\n" + product.Name + " - " + product.Price.ToString() + "zł x " + product.Quantity +  " = " + product.Quantity * product.Price + " zł";
+                orderContent.Append(product.Name).Append(" - ").Append(product.Price).Append(" zł x ").Append(product.Quantity).Append(" = ")
+                    .Append(product.Quantity * product.Price).AppendLine(" zł");
             }
-            EmailBody += "\n" + "\n" + "Łączny koszt zamówienia: " + OrderCost + " zł";
-            EmailBody += "\n" + "\n" + "Uwagi do zamówienia: " + OrderRemarks;
+            orderContent.Append(SUMMARYLINE)
+                .Append(string.Concat(DOUBLE_LINE_BREAK, ORDER_COST_TEXT, OrderCost, " zł"))
+                .Append(string.Concat(DOUBLE_LINE_BREAK, ORDER_REMARKS_TEXT, OrderRemarks));
+            EmailBody = string.Concat(CLIENT_ORDER_TEXT, Sender, "':", DOUBLE_LINE_BREAK, orderContent);
         }
 
-        private void GetOrderCost()
-        {
-            int orderCost = 0;
-            foreach (var prod in OrderSummaryProducts)
-            {
-                for (int i = 0; i < prod.Quantity; i++)
-                {
-                    orderCost += prod.Price;
-                }
-            }
-            OrderCost = orderCost;
-        }
+        //private void GetOrderCost()
+        //{
+        //    int orderCost = 0;
+        //    foreach (var prod in OrderSummaryProducts)
+        //    {
+        //        for (int i = 0; i < prod.Quantity; i++)
+        //        {
+        //            orderCost += prod.Price;
+        //        }
+        //    }
+        //    OrderCost = orderCost;
+        //}
     }
 }

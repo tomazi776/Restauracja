@@ -1,15 +1,29 @@
-﻿using Restauracja.Model;
+﻿using Prism.Events;
+using Restauracja.Model;
 using Restauracja.Model.Entities;
+using Restauracja.Services;
 using Restauracja.Utilities;
+using Restauracja.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Restauracja.ViewModel
 {
-    public class MenuViewModel : BaseViewModel
+    public partial class MenuViewModel : BaseViewModel
     {
+
+        public ICommand AddSelectedProductToOrderCommand { get; set; }
+        public ICommand RemoveSelectedProductFromOrderCommand { get; set; }
+        public ICommand PlaceOrderCommand { get; set; }
+        IServiceLocator locator;
+        private readonly IEventAggregator eventAggregator;
+
+        public event EventHandler<OrderProductsEventArgs> OrderPlaced;
+
         public const string WELCOME_MESSAGE_HEADER = "Zamówienie już prawie złożone!";
         public const string WELCOME_MESSAGE_CONTENT = "Teraz tylko podaj maila, w celu wysłania zamówienia, mniam!";
         public const string CONFIRMATION_PROMPT_CONTENT = "Czy na pewno chcesz złożyć to zamówienie?";
@@ -81,8 +95,34 @@ namespace Restauracja.ViewModel
             }
         }
 
-        public MenuViewModel()
+        private OrderPOCO order = new OrderPOCO();
+
+        public OrderPOCO Order
         {
+            get { return order; }
+            set 
+            { 
+                SetProperty(ref order, value); 
+            }
+        }
+
+        public OrderSummaryViewModel OrderSummaryViewModel { get; set; }
+
+        //public MenuViewModel()
+        //{
+
+        //}
+
+        public MenuViewModel(IEventAggregator ea)
+        {
+            AddSelectedProductToOrderCommand = new CommandHandler(AddSelectedProductToOrder, () => true);
+            RemoveSelectedProductFromOrderCommand = new CommandHandler(RemoveSelectedProductFromOrder, () => true);
+            PlaceOrderCommand = new CommandHandler(PlaceOrder, () => true);
+
+            this.eventAggregator = ea;
+            //locator = new ServiceLocator();
+
+
             GetProducts(ProductType.Pizza, POCOPizzas);
             GetProducts(ProductType.PizzaTopping, POCOPizzaToppings);
             GetProducts(ProductType.MainCourse, POCOMainCourses);
@@ -91,17 +131,51 @@ namespace Restauracja.ViewModel
             GetProducts(ProductType.Beverage, POCOBeverages);
         }
 
-        public void GetOrderCost()
+        protected virtual void OnOrderPlaced(ObservableCollection<ProductPOCO> orderProducts)
         {
-            int orderCost = 0;
-            foreach (var prod in OrderProducts)
+            if (OrderPlaced != null)
             {
-                for (int i = 0; i < prod.Quantity; i++)
-                {
-                    orderCost += prod.Price;
-                }
+                OrderPlaced(this, new OrderProductsEventArgs() { OrderProducts = orderProducts });
             }
-            OrderCost = orderCost;
+        }
+
+        private void PlaceOrder()
+        {
+            MessageBoxResult result = MessageBox.Show(CONFIRMATION_PROMPT_CONTENT, CONFIRMATION_PROMPT_HEADER, MessageBoxButton.YesNo);
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    //OrderSummaryViewModel = new OrderSummaryViewModel(OrderProducts);
+
+                    //OrderPlaced += OrderSummaryViewModel.OnOrderPlaced;
+                    OrderSummaryViewModel = new OrderSummaryViewModel(eventAggregator);
+
+
+                    eventAggregator.GetEvent<ProductsPOCOMessageSentEvent>().Publish(OrderProducts);
+                    eventAggregator.GetEvent<ProductRemarksMessageSentEvent>().Publish(OrderRemarks);
+
+
+                    Window orderWindow = new OrderSummaryWindow(); //menuVm.OrderProducts, menuVm.OrderRemarks
+                    orderWindow.DataContext = OrderSummaryViewModel;
+                    orderWindow.Show();
+                    //orderWindow.Show();
+                    //this.Close();
+                    //MessageBox.Show(MenuViewModel.WELCOME_MESSAGE_CONTENT, MenuViewModel.WELCOME_MESSAGE_HEADER);
+                    //break;
+
+
+
+                    //IWindowService windowService = locator.GetService<IWindowService>();
+                    //windowService.ShowWindow(this);
+
+                    MessageBox.Show(WELCOME_MESSAGE_CONTENT, WELCOME_MESSAGE_HEADER);
+                    break;
+            }
+        }
+
+        public void GetSummaryCost()
+        {
+            OrderCost = Order.GetOrderCost<ProductPOCO>(OrderProducts);
         }
 
         private void CreatePOCOProducts(List<Product> products, List<IProduct> pocoPrtoducts)
@@ -126,6 +200,7 @@ namespace Restauracja.ViewModel
                     ToBeAdded.Quantity++;
                 }
             }
+            GetSummaryCost();
         }
 
         public void RemoveSelectedProductFromOrder()
@@ -135,6 +210,7 @@ namespace Restauracja.ViewModel
                 ToBeRemoved.Quantity = 1;
                 OrderProducts.Remove(ToBeRemoved);
             }
+            GetSummaryCost();
         }
 
         private void GetProducts(ProductType productType, List<IProduct> products)
