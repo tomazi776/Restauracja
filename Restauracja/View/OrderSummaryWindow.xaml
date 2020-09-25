@@ -3,11 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Restauracja.View"
+        xmlns:local="clr-namespace:Restauracja.View" 
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:si="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
         Title="OrderSummaryWindow" Height="600" Width="900"
         >
-    
+
     <Grid>
         <ListView HorizontalAlignment="Left" ItemsSource="{Binding OrderSummaryProducts, Mode=TwoWay}" Height="242" Margin="171,110,0,0" VerticalAlignment="Top" Width="238">
             <ListView.View>
@@ -44,10 +46,10 @@
         <TextBox x:Name="SenderTextBox" Text="{Binding Sender}" HorizontalAlignment="Left" Height="41" Margin="437,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184"/>
         <TextBlock HorizontalAlignment="Left" Text="{Binding OrderRemarks}" Margin="171,418,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="94" Width="661"/>
         <Label Content="Uwagi:" HorizontalAlignment="Left" Margin="171,387,0,0" VerticalAlignment="Top" Width="119"/>
-        <Button Content="Wyślij zamówienie" IsEnabled="{Binding SendEnabled}" Command="{Binding SendMailCommand}" HorizontalAlignment="Left" Margin="437,346,0,0" VerticalAlignment="Top" Width="184" Height="55"/>
+        <Button Content="Wyślij zamówienie" IsEnabled="{Binding SendEnabled}" Command="{Binding SendMailCommand}" HorizontalAlignment="Left" Margin="437,346,0,0" VerticalAlignment="Top" Width="184" Height="55" Click="Button_Click"/>
         <Button Content="Historia zamówień" HorizontalAlignment="Left" Margin="696,26,0,0" VerticalAlignment="Top" Width="162" Height="50" Click="OrderHistoryButton_Click"/>
         <Label Content="Hasło:" HorizontalAlignment="Left" Margin="437,158,0,0" VerticalAlignment="Top" Width="56"/>
-        <TextBox x:Name="PassphraseTextBox" Text="{Binding PassPhrase}" HorizontalAlignment="Left" Height="42" Margin="437,189,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184"/>
+        <PasswordBox Name="PassBox" HorizontalAlignment="Left" Margin="437,189,0,0" VerticalAlignment="Top" Height="42" Width="174"/>
 
     </Grid>
 </Window>

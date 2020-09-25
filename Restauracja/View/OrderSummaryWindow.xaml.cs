@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,8 +29,17 @@ namespace Restauracja.View
         public OrderSummaryWindow()
         {
             InitializeComponent();
+
+            //summaryOrderVm = this.DataContext as OrderSummaryViewModel;
             //DataContext = summaryOrderVm = new OrderSummaryViewModel();
+            //PassBox.SecurePassword
         }
+
+        //private void ExecutePasswordChangedCommand(PasswordBox obj)
+        //{
+        //    if (obj != null)
+        //        Password = obj.Password;
+        //}
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
@@ -48,13 +59,47 @@ namespace Restauracja.View
         {
             //summaryOrderVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
             var viewModel = this.DataContext;
-
             var orderSummaryVm = viewModel as OrderSummaryViewModel;
+
             if (orderSummaryVm != null)
             {
                 orderSummaryVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
             }
+        }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = this.DataContext;
+            var orderSummaryVm = viewModel as OrderSummaryViewModel;
+
+            if (orderSummaryVm is null)
+            {
+                Console.WriteLine("Viewmodel is null!");
+                return;
+            }
+
+            orderSummaryVm.MakeOrder();
+            var emailBody = orderSummaryVm.ComposeEmailBody();
+
+            MailMessage email = new MailMessage(orderSummaryVm.Sender, orderSummaryVm.Recipent, OrderSummaryViewModel.EMAIL_SUBJECT, emailBody); // instead EmailBody
+            SmtpClient smtpClient = new SmtpClient(OrderSummaryViewModel.GMAIL_SMTP_HOST, OrderSummaryViewModel.GMAIL_SMTP_PORT);
+
+            if (orderSummaryVm.Sender != null && PassBox.SecurePassword != null)
+            {
+                smtpClient.UseDefaultCredentials = true;
+                smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, PassBox.SecurePassword);
+            }
+            smtpClient.EnableSsl = true;
+            smtpClient.Timeout = 10000;
+            try
+            {
+                smtpClient.Send(email);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }
