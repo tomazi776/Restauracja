@@ -6,7 +6,7 @@ namespace Restauracja.Model
     {
         public int Id { get; set; }
         public string CustomerName { get; set; }
-        public int FinalCost { get; set; }
+        public decimal FinalCost { get; set; }
         public string Description { get; set; }
         public DateTime Date { get; set; }
         public FullOrderInfo() { }

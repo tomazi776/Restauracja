@@ -11,11 +11,12 @@ namespace Restauracja.Utilities
             switch (product.ProductType)
             {
                 case ProductType.Pizza:
+                    //pocoProduct = new Pizza(product.Name, product.Price, product.Remarks);
                     pocoProduct = new Pizza(product.Name, product.Price, product.Remarks);
                     break;
 
                 case ProductType.PizzaTopping:
-                    pocoProduct = new PizzaTopping(product.Name);
+                    pocoProduct = new PizzaTopping(product.Name, product.Price);
                     break;
 
                 case ProductType.MainCourse:
@@ -27,7 +28,7 @@ namespace Restauracja.Utilities
                     break;
 
                 case ProductType.Beverage:
-                    pocoProduct = new Beverage(product.Name);
+                    pocoProduct = new Beverage(product.Name, product.Price);
                     break;
 
                 case ProductType.Soup:

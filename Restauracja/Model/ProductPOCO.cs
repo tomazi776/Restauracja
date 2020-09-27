@@ -2,11 +2,12 @@
 
 namespace Restauracja.Model
 {
+    //public abstract class ProductPOCO : BaseViewModel
     public abstract class ProductPOCO : BaseViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
         public ProductType ProductType { get; set; }
 
         private int quantity;
@@ -21,9 +22,10 @@ namespace Restauracja.Model
         public string Description { get; set; }
         public string Remarks { get; set; }
 
-        public ProductPOCO(string name, int price, string description = "", string remarks = "", ProductType prod_type = ProductType.MainCourse , int quantity = 1)
+        public ProductPOCO(string name, decimal price, string description = "", string remarks = "", ProductType prod_type = ProductType.MainCourse , int quantity = 1)
         {
             Name = name;
+            //Price = price;
             Price = price;
             ProductType = prod_type;
             Quantity = quantity;

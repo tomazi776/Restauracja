@@ -187,6 +187,7 @@
                     <GridViewColumn Header="Cena">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
+                                <!--<TextBlock Text="{Binding Price}"/>-->
                                 <TextBlock Text="{Binding Price}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -216,10 +217,10 @@
             </ListView.View>
         </ListView>
         
-        <TextBox x:Name="UwagiTextBox" Text="{Binding OrderRemarks}" HorizontalAlignment="Left" Height="53" Margin="564,387,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="320"/>
+        <TextBox x:Name="UwagiTextBox" Text="{Binding Order.Description}" HorizontalAlignment="Left" Height="53" Margin="564,387,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="320"/>
         <Label Content="Uwagi do zamówienia:" HorizontalAlignment="Left" Margin="564,343,0,0" VerticalAlignment="Top" Width="136" Height="39"/>
         <Label x:Name="SummaryLabel" Content="Łącznie:" HorizontalAlignment="Left" Margin="564,449,0,0" VerticalAlignment="Top" Width="122" Height="33"/>
-        <Label x:Name="SummaryCostLabel" Content="{Binding OrderCost}" HorizontalAlignment="Left" Margin="564,482,0,0" VerticalAlignment="Top" Width="83" Height="36"/>
+        <Label x:Name="SummaryCostLabel" Content="{Binding Order.FinalCost}" HorizontalAlignment="Left" Margin="564,482,0,0" VerticalAlignment="Top" Width="83" Height="36"/>
 
         <Button Content="Złóż zamówienie" HorizontalAlignment="Left" Margin="725,482,0,0" VerticalAlignment="Top" Width="107" Height="36" Command="{Binding PlaceOrderCommand}"/>
 

@@ -4,7 +4,7 @@
              xmlns:vm="clr-namespace:Restauracja.ViewModel"
              xmlns:local="clr-namespace:Restauracja"
              StartupUri="View/MainWindow.xaml">
-    <Application.Resources>
+    <!--<Application.Resources>
         <vm:MenuViewModel x:Key="MenuViewModel" />
-    </Application.Resources>
+    </Application.Resources>-->
 </Application>

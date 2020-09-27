@@ -35,16 +35,13 @@ namespace Restauracja.View
             //PassBox.SecurePassword
         }
 
-        //private void ExecutePasswordChangedCommand(PasswordBox obj)
-        //{
-        //    if (obj != null)
-        //        Password = obj.Password;
-        //}
-
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             //MainWindow main = new MainWindow();
             //main.Show();
+            Window main = new MainWindow();
+            main.Show();
+
             this.Close();
         }
 

@@ -33,9 +33,26 @@ namespace Restauracja.ViewModel
                 if (orderProducts != value)
                 {
                     SetProperty(ref orderProducts, value);
+                    SingleOrder.Instance.OrderProducts = value;
                 }
             }
         }
+
+        private OrderPOCO order;
+        public OrderPOCO Order
+        {
+            get { return order; }
+            set
+            {
+                if (order != value)
+                {
+                    SetProperty(ref order, value);
+                    SingleOrder.Instance.Order = value;
+                }
+            }
+        }
+
+        public MenuViewModel MenuViewModel { get; set; }
 
         private bool sendEnabled;
         public bool SendEnabled
@@ -78,8 +95,11 @@ namespace Restauracja.ViewModel
             get { return sender; }
             set
             {
-                SetProperty(ref sender, value);
-                SingleCustomer.GetInstance().Email = sender;
+                if (sender != value)
+                {
+                    SetProperty(ref sender, value);
+                    SingleCustomer.GetInstance().Email = sender;
+                }
             }
         }
 
@@ -144,7 +164,8 @@ namespace Restauracja.ViewModel
         public void MakeOrder()
         {
             OrderPOCO order = new OrderPOCO();
-            OrderCost = order.GetOrderCost<ProductPOCO>(OrderSummaryProducts);
+            //OrderCost = order.GetOrderCost<ProductPOCO>(OrderSummaryProducts);
+            order.FinalCost = order.GetOrderCost<ProductPOCO>(OrderSummaryProducts);
             SaveOrderToDb();
         }
 
