@@ -11,14 +11,19 @@ namespace Restauracja.View
         IEventAggregator ea = new EventAggregator();
         public MainWindow()
         {
-            //ea = eventAggregator;
-
             InitializeComponent();
 
             DataContext = menuVm = new MenuViewModel(ea);
 
             menuVm.OrderPlaced += MenuVm_OrderPlaced;
         }
+
+        //private void OrderSummaryViewModel_BackBtnPressed(object sender, System.EventArgs e)
+        //{
+        //    menuVm.GetCachedOrderOnBackBtnPressed();
+        //    //add event to viewmodel which will notify MenuViewmodel and handle getting data from Order Singleton
+
+        //}
 
         private void MenuVm_OrderPlaced(object sender, System.EventArgs e)
         {

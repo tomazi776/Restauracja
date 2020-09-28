@@ -29,19 +29,13 @@ namespace Restauracja.View
         public OrderSummaryWindow()
         {
             InitializeComponent();
-
-            //summaryOrderVm = this.DataContext as OrderSummaryViewModel;
-            //DataContext = summaryOrderVm = new OrderSummaryViewModel();
-            //PassBox.SecurePassword
+            summaryOrderVm = DataContext as OrderSummaryViewModel;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            //MainWindow main = new MainWindow();
-            //main.Show();
             Window main = new MainWindow();
             main.Show();
-
             this.Close();
         }
 
@@ -64,7 +58,7 @@ namespace Restauracja.View
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void SendMail_BtnClick(object sender, RoutedEventArgs e)
         {
             var viewModel = this.DataContext;
             var orderSummaryVm = viewModel as OrderSummaryViewModel;

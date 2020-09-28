@@ -10,7 +10,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>
     <Grid>
-        <Label Content="Order History:" HorizontalAlignment="Left" Margin="320,35,0,0" VerticalAlignment="Top" Height="44" Width="162" FontSize="24"/>
+        <Label Content="Historia zamówień:" HorizontalAlignment="Left" Margin="320,35,0,0" VerticalAlignment="Top" Height="44" FontSize="24"/>
 
         <Button Content="Wróć" HorizontalAlignment="Left" Margin="52,42,0,0" VerticalAlignment="Top" Width="105" Height="37" Click="BackButton_Click"/>
         <ListView Name="OrderHistoryListView" ItemsSource="{Binding Orders}" SelectedItem="{Binding Order}" HorizontalAlignment="Left" Height="147" Margin="52,114,0,0" VerticalAlignment="Top" Width="783">

@@ -7,11 +7,12 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:si="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
-        Title="OrderSummaryWindow" Height="600" Width="900"
-        >
+        Title="OrderSummaryWindow" Height="600" Width="900">
+    <Window.Resources>
 
+    </Window.Resources>
     <Grid>
-        <ListView HorizontalAlignment="Left" ItemsSource="{Binding OrderSummaryProducts, Mode=TwoWay}" Height="242" Margin="171,110,0,0" VerticalAlignment="Top" Width="238">
+        <ListView HorizontalAlignment="Left" ItemsSource="{Binding OrderSummaryProducts, Mode=TwoWay}" Height="258" Margin="171,110,0,0" VerticalAlignment="Top" Width="322">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Danie">
@@ -39,17 +40,20 @@
             </ListView.View>
         </ListView>
         <Label Content="Twoje zamówienie:" HorizontalAlignment="Left" Margin="176,65,0,0" VerticalAlignment="Top" Width="114" Height="28"/>
-        <Button x:Name="BackButton" Content="Wróć" HorizontalAlignment="Left" Margin="30,32,0,0" VerticalAlignment="Top" Width="92" Height="37" Click="BackButton_Click"/>
-        <Label Content="Email odbiorcy:"  HorizontalAlignment="Left" Margin="437,253,0,0" VerticalAlignment="Top" Width="115"/>
-        <TextBox x:Name="RecipentTextBox" TextChanged="RecipentTextBox_TextChanged" Text="{Binding Recipent}" HorizontalAlignment="Left" Height="39" Margin="437,284,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="184"/>
-        <Label Content="Twój email (Gmail)" HorizontalAlignment="Left" Margin="437,65,0,0" VerticalAlignment="Top" Height="26"/>
-        <TextBox x:Name="SenderTextBox" Text="{Binding Sender}" HorizontalAlignment="Left" Height="41" Margin="437,96,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="184"/>
-        <TextBlock HorizontalAlignment="Left" Text="{Binding OrderRemarks}" Margin="171,418,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="94" Width="661"/>
-        <Label Content="Uwagi:" HorizontalAlignment="Left" Margin="171,387,0,0" VerticalAlignment="Top" Width="119"/>
-        <Button Content="Wyślij zamówienie" IsEnabled="{Binding SendEnabled}" Command="{Binding SendMailCommand}" HorizontalAlignment="Left" Margin="437,346,0,0" VerticalAlignment="Top" Width="184" Height="55" Click="Button_Click"/>
-        <Button Content="Historia zamówień" HorizontalAlignment="Left" Margin="696,26,0,0" VerticalAlignment="Top" Width="162" Height="50" Click="OrderHistoryButton_Click"/>
-        <Label Content="Hasło:" HorizontalAlignment="Left" Margin="437,158,0,0" VerticalAlignment="Top" Width="56"/>
-        <PasswordBox Name="PassBox" HorizontalAlignment="Left" Margin="437,189,0,0" VerticalAlignment="Top" Height="42" Width="174"/>
+        <Button x:Name="BackButton" Content="Wróć" HorizontalAlignment="Left" Margin="32,26,0,0" VerticalAlignment="Top" Width="92" Height="50" Click="BackButton_Click"/>
+        <Label Content="Email odbiorcy:"  HorizontalAlignment="Left" Margin="574,298,0,0" VerticalAlignment="Top" Width="115"/>
+        <TextBox x:Name="RecipentTextBox" TextChanged="RecipentTextBox_TextChanged" Text="{Binding Recipent}" HorizontalAlignment="Left" Height="39" Margin="574,329,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="184"/>
+        <Label Content="Twój email (Gmail)" HorizontalAlignment="Left" Margin="574,110,0,0" VerticalAlignment="Top" Height="26"/>
+        <TextBox x:Name="SenderTextBox" Text="{Binding Sender}" HorizontalAlignment="Left" Height="41" Margin="574,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="185"/>
+        <Label Content="Uwagi:" HorizontalAlignment="Left" Margin="171,435,0,0" VerticalAlignment="Top" Width="119"/>
+        <Label Name="UwagiTextBox"  BorderThickness="1" BorderBrush="LightGray" HorizontalAlignment="Left" Content="{Binding Order.Description}"  Margin="180,466,0,0" VerticalAlignment="Top" Height="77" Width="313"/>
 
+
+        <Button Content="Wyślij zamówienie" IsEnabled="{Binding SendEnabled}" Command="{Binding SendMailCommand}" HorizontalAlignment="Left" Margin="574,466,0,0" VerticalAlignment="Top" Width="184" Height="77" Click="SendMail_BtnClick"/>
+        <Button Content="Historia zamówień" HorizontalAlignment="Left" Margin="698,26,0,0" VerticalAlignment="Top" Width="162" Height="50" Click="OrderHistoryButton_Click"/>
+        <Label Content="Hasło:" HorizontalAlignment="Left" Margin="574,203,0,0" VerticalAlignment="Top" Width="56"/>
+        <PasswordBox Name="PassBox" HorizontalAlignment="Left" Margin="574,234,0,0" VerticalAlignment="Top" Height="42" Width="185"/>
+        <Label Content="Łącznie: " HorizontalAlignment="Left" Margin="171,384,0,0" VerticalAlignment="Top" Width="105"/>
+        <TextBlock Text="{Binding Order.FinalCost, StringFormat=C2, ConverterCulture=pl-PL}" HorizontalAlignment="Left" Margin="299,390,0,0" VerticalAlignment="Top" Width="105" Height="26"/>
     </Grid>
 </Window>

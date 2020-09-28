@@ -1,4 +1,5 @@
 ﻿using Prism.Events;
+using Restauracja.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Restauracja
 {
-    public class ProductRemarksMessageSentEvent : PubSubEvent<string>
+    public class OrderMessageSentEvent : PubSubEvent<OrderPOCO>
     {
     }
 }

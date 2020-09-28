@@ -27,6 +27,14 @@ namespace Restauracja.ViewModel
             }
         }
 
+        /// <summary>
+        /// Sets property assuring the raise of PropertyChanged event and equality of Types
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="backingField"></param>
+        /// <param name="value"></param>
+        /// <param name="property"></param>
+        /// <returns></returns>
         protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName]string property = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingField, value))

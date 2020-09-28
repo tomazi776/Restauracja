@@ -44,7 +44,8 @@ namespace Restauracja.Model
         //    return true;
         //}
 
-        public decimal GetOrderCost<ProductPOCO>(ObservableCollection<Model.ProductPOCO> orderSummaryProducts)
+        // Order.Products instead of OrderProducts
+        public decimal GetOrderCost<ProductPOCO>(List<Model.ProductPOCO> orderSummaryProducts)
         {
             decimal orderCost = 0;
             foreach (var prod in orderSummaryProducts)

@@ -22,27 +22,20 @@ namespace Restauracja.ViewModel
         IServiceLocator locator;
         private readonly IEventAggregator eventAggregator;
 
+        //public static IEventAggregator Ea { get; set; } = new EventAggregator();
+
 
         public const string WELCOME_MESSAGE_HEADER = "Zamówienie już prawie złożone!";
         public const string WELCOME_MESSAGE_CONTENT = "Teraz tylko podaj maila, w celu wysłania zamówienia, mniam!";
         public const string CONFIRMATION_PROMPT_CONTENT = "Czy na pewno chcesz złożyć to zamówienie?";
         public const string CONFIRMATION_PROMPT_HEADER = "Uwaga";
 
+        //private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         public ObservableCollection<ProductPOCO> OrderProducts
         {
             get
             {
-                //if (SingleOrder.Instance.OrderProducts?.Count > 0)
-                //{
-                //    orderProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.OrderProducts);
-                //}
-                //return orderProducts;
-
-                if (SingleOrder.Instance.Order?.Products?.Count > 0)
-                {
-                    orderProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
-                }
                 return orderProducts;
             }
             set
@@ -67,17 +60,6 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //TODO: Dlaczego jesteś zjebem i wrzuciłeś koszt zamówienia tu, zamiast użyć final cost z Order?
-        private int orderCost;
-        public int OrderCost
-        {
-            get { return orderCost; }
-            set
-            {
-                SetProperty(ref orderCost, value);
-            }
-        }
-
         public List<IProduct> POCOPizzas { get; set; } = new List<IProduct>();
         public List<IProduct> POCOPizzaToppings { get; set; } = new List<IProduct>();
         public List<IProduct> POCOMainCourses { get; set; } = new List<IProduct>();
@@ -98,6 +80,19 @@ namespace Restauracja.ViewModel
             }
         }
 
+        private bool placeOrderEnabled;
+        public bool PlaceOrderEnabled
+        {
+            get { return placeOrderEnabled; }
+            set
+            {
+                if (placeOrderEnabled != value)
+                {
+                    SetProperty(ref placeOrderEnabled, value);
+                }
+            }
+        }
+
         private ProductPOCO toBeRemoved;
         public ProductPOCO ToBeRemoved
         {
@@ -114,7 +109,11 @@ namespace Restauracja.ViewModel
         private OrderPOCO order = new OrderPOCO();
         public OrderPOCO Order
         {
-            get { return order; }
+            get 
+            {
+                // See? Getter doesn't need logic to get data from Singleton if not null - Instead set its data in ctor()
+                return order;
+            }
             set 
             {
                 if (order != value)
@@ -126,19 +125,16 @@ namespace Restauracja.ViewModel
 
         public OrderSummaryViewModel OrderSummaryViewModel { get; set; }
 
-        //public MenuViewModel()
-        //{
-
-        //}
-
         public MenuViewModel(IEventAggregator ea)
         {
+            this.eventAggregator = ea;
             AddSelectedProductToOrderCommand = new CommandHandler(AddSelectedProductToOrder, () => true);
             RemoveSelectedProductFromOrderCommand = new CommandHandler(RemoveSelectedProductFromOrder, () => true);
 
             PlaceOrderCommand = new CommandHandler(PlaceOrder, () => true);
 
-            this.eventAggregator = ea;
+            GetCachedData();
+
             //locator = new ServiceLocator();
 
             GetProducts(ProductType.Pizza, POCOPizzas);
@@ -159,8 +155,8 @@ namespace Restauracja.ViewModel
             }
         }
 
+        // TODO: Use just events or EventAggregator
         public event EventHandler<OrderEventArgs> OrderPlacedWithData;
-
         public virtual void OnOrderPlacedWithData()
         {
             if (OrderPlacedWithData != null)
@@ -175,15 +171,11 @@ namespace Restauracja.ViewModel
             switch (result)
             {
                 case MessageBoxResult.Yes:
-                    //OrderSummaryViewModel = new OrderSummaryViewModel(OrderProducts);
-                    //OrderPlaced += OrderSummaryViewModel.OnOrderPlaced;
-                    CreateOrder();
                     OrderSummaryViewModel = new OrderSummaryViewModel(eventAggregator);
 
                     // TODO: Replace with one event sending aggregated data in one Order Object
-                    eventAggregator.GetEvent<ProductsPOCOMessageSentEvent>().Publish(OrderProducts);
-                    eventAggregator.GetEvent<ProductRemarksMessageSentEvent>().Publish(OrderRemarks);
-
+                    eventAggregator.GetEvent<OrderMessageSentEvent>().Publish(Order);
+                    
                     OnOrderPlaced();
 
                     //IWindowService windowService = locator.GetService<IWindowService>();
@@ -194,15 +186,23 @@ namespace Restauracja.ViewModel
             }
         }
 
-        private void CreateOrder()
+        public void GetCachedData()
         {
-            //Order.FinalCost = 
+            if (SingleOrder.Instance.Order != null)
+                Order = SingleOrder.Instance.Order;
+
+            if (SingleOrder.Instance.Order?.Products?.Count > 0)
+                OrderProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
+
+            EnableDisablePlacingOrder(OrderProducts);
+
+            Console.WriteLine("Got data from cache!!!!!!!!!!!!!!");
         }
 
-        public void GetSummaryCost()
+        // Order.Products instead of OrderProducts
+        public void UpdateSummaryCost()
         {
-            Order.FinalCost = Order.GetOrderCost<ProductPOCO>(OrderProducts);
-            //Order.FinalCost = 12.5m;
+            Order.FinalCost = Order.GetOrderCost<ProductPOCO>(Order.Products);
         }
 
         private void CreatePOCOProducts(List<Product> products, List<IProduct> pocoPrtoducts)
@@ -214,30 +214,43 @@ namespace Restauracja.ViewModel
             }
         }
 
-        public void AddSelectedProductToOrder()
+        //TODO: Instead of adding to ObservableCollection - Update the collection (initialize with
+        private void AddSelectedProductToOrder()
         {
             if (ToBeAdded != null)     
             {
-                if (!OrderProducts.Contains(ToBeAdded))
+                EnableDisablePlacingOrder(OrderProducts);
+
+                if (!Order.Products.Contains(ToBeAdded))
                 {
-                    OrderProducts.Add(ToBeAdded);
+                    Order.Products.Add(ToBeAdded); // for data to be passed further passed
+                    OrderProducts.Add(ToBeAdded); // for display in this View
                 }
                 else
                 {
                     ToBeAdded.Quantity++;
                 }
             }
-            GetSummaryCost();
+            EnableDisablePlacingOrder(OrderProducts);
+
+            UpdateSummaryCost();
         }
 
-        public void RemoveSelectedProductFromOrder()
+        private void EnableDisablePlacingOrder(ObservableCollection<ProductPOCO> orderProducts)
+        {
+            PlaceOrderEnabled = orderProducts.Count() == 0 ? false : true;
+        }
+
+        private void RemoveSelectedProductFromOrder()
         {
             if (ToBeRemoved != null)
             {
                 ToBeRemoved.Quantity = 1;
-                OrderProducts.Remove(ToBeRemoved);
+                Order.Products.Remove(ToBeRemoved); // for data to be passed further passed
+                OrderProducts.Remove(ToBeRemoved); // for display in this View
+                EnableDisablePlacingOrder(OrderProducts);
             }
-            GetSummaryCost();
+            UpdateSummaryCost();
         }
 
         //TODO: Get rid of second parameter, decide upon type

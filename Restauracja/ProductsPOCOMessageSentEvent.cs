@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Restauracja
 {
-    public class ProductsPOCOMessageSentEvent : PubSubEvent<ObservableCollection<ProductPOCO>>
+    public class ProductsPOCOMessageSentEvent : PubSubEvent<List<ProductPOCO>>
     {
     }
 }
