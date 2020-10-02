@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 using static Restauracja.ViewModel.MenuViewModel;
 
@@ -17,14 +18,16 @@ namespace Restauracja.ViewModel
     public class OrderSummaryViewModel : BaseViewModel
     {
         public const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
-        public const string GMAIL_SMTP_HOST = "smtp.gmail.com";
-        const string CLIENT_ORDER_TEXT = "Zamówienie klienta '";
-        const string ORDER_COST_TEXT = "Łączny koszt zamówienia: ";
-        const string ORDER_REMARKS_TEXT = "Uwagi do zamówienia: ";
-        const string DOUBLE_LINE_BREAK = "\r\n\r\n";
-        const string SUMMARYLINE = "__________________________________";
+        //public const string GMAIL_SMTP_HOST = "smtp.gmail.com";
+        //const string CLIENT_ORDER_TEXT = "Zamówienie klienta '";
+        //const string ORDER_COST_TEXT = "Łączny koszt zamówienia: ";
+        //const string ORDER_REMARKS_TEXT = "Uwagi do zamówienia: ";
+        //const string DOUBLE_LINE_BREAK = "\r\n\r\n";
+        //const string SUMMARYLINE = "__________________________________";
+        //public const int GMAIL_SMTP_PORT = 587;
 
-        public const int GMAIL_SMTP_PORT = 587;
+        public event EventHandler<EventArgs> OrderSaved;
+
 
         public ICommand SendMailCommand { get; }
         public ICommand BackCommand { get;}
@@ -70,21 +73,6 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //public OrderPOCO PlacedOrder { get; set; }
-
-        private string orderRemarks;
-        public string OrderRemarks
-        {
-            get
-            {
-                return orderRemarks;
-            }
-            set
-            {
-                SetProperty(ref orderRemarks, value);
-            }
-        }
-
         private string recipent;
         public string Recipent
         {
@@ -104,7 +92,7 @@ namespace Restauracja.ViewModel
                 if (sender != value)
                 {
                     SetProperty(ref sender, value);
-                    SingleCustomer.GetInstance().Email = sender;
+                    //SingleCustomer.GetInstance().Email = sender; //uncoment after testing
                 }
             }
         }
@@ -143,6 +131,15 @@ namespace Restauracja.ViewModel
             OrderSummaryProducts = new ObservableCollection<ProductPOCO>(order.Products);
         }
 
+
+        protected virtual void OnOrderSaved()
+        {
+            if (OrderSaved != null)
+            {
+                OrderSaved.Invoke(this, EventArgs.Empty);
+            }
+        }
+
         //TODO: Why create new order if its already made in MenuViewModel?
         public void MakeOrder()
         {
@@ -150,6 +147,7 @@ namespace Restauracja.ViewModel
             //OrderCost = order.GetOrderCost<ProductPOCO>(OrderSummaryProducts);
             //order.FinalCost = order.GetOrderCost<ProductPOCO>(Order.Products);
             SaveOrderToDb();
+            OnOrderSaved();
         }
 
         // This logic is in the codebehind for security reasons
@@ -189,10 +187,7 @@ namespace Restauracja.ViewModel
             {
                 Customer newCustomer = new Customer(Sender);
                 Order newlyPlacedOrder = new Order(Order.FinalCost, Order.Description, DateTime.Now);
-
                 newlyPlacedOrder.Customer = newCustomer;
-                //newlyPlacedOrder.FinalCost = OrderCost;
-                //newlyPlacedOrder.Description = Order.Description;
 
                 foreach (var prod in OrderSummaryProducts)
                 {
@@ -200,40 +195,25 @@ namespace Restauracja.ViewModel
                     newlyPlacedOrder.OrderItem.Add(orderItem);
                 }
                 dbContext.Orders.Add(newlyPlacedOrder);
-                dbContext.SaveChanges();
+
+                try
+                {
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: Logging mechanism
+                    Console.WriteLine("BŁĄD ZAPISU DO BAZY DANYCH - " + ex.Message);
+                    MessageBox.Show("Nie można zapisać zamówienia w bazie danych," +
+                        "/r/n sprawdź logi w pliku logs.txt lub skontaktuj się z administratorem.", "Błąd");
+                    throw;
+                }
             }
         }
 
         private OrderItem MapToOrderItem(ProductPOCO pocoProduct)
         {
             return new OrderItem(pocoProduct.Name, pocoProduct.Price, pocoProduct.Quantity, pocoProduct.Description, pocoProduct.Remarks);
-        }
-
-        // TODO: change OrderCost to decimal and apply formatting for currency in XAML instead appending it here 
-        // (edit - has to be here cause its for email not displaing in app)
-        public string ComposeEmailBody()
-        {
-            var currency = CultureInfo.CreateSpecificCulture("pl-PL").NumberFormat.CurrencySymbol;
-
-            StringBuilder orderContent = new StringBuilder();
-            foreach (var product in OrderSummaryProducts)
-            {
-                orderContent
-                    .Append(product.Name)
-                    .Append(" - ")
-                    .Append(product.Price)
-                    .Append($" {currency} x ")
-                    .Append(product.Quantity)
-                    .Append(" = ")
-                    .Append(product.Quantity * product.Price).AppendLine($" {currency}");
-            }
-            orderContent
-                .Append(SUMMARYLINE)
-                .Append(string.Concat(DOUBLE_LINE_BREAK, ORDER_COST_TEXT, Order.FinalCost, $" {currency}"))
-                .Append(string.Concat(DOUBLE_LINE_BREAK, ORDER_REMARKS_TEXT, Order.Description));
-            //EmailBody = string.Concat(CLIENT_ORDER_TEXT, Sender, "':", DOUBLE_LINE_BREAK, orderContent);
-            var emailBody = string.Concat(CLIENT_ORDER_TEXT, Sender, "':", DOUBLE_LINE_BREAK, orderContent);
-            return emailBody;
         }
     }
 }

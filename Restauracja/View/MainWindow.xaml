@@ -6,28 +6,20 @@
         xmlns:vm="clr-namespace:Restauracja.ViewModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="900"
-        >
-    <!--<Window.DataContext>
-        <vm:MenuViewModel/>
-    </Window.DataContext>-->
-
+        Background="AliceBlue"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Left" />
         </Style>
     </Window.Resources>
     <Grid>
-        <Label Content="RISTORANTE" HorizontalAlignment="Left" Margin="418,10,0,0" VerticalAlignment="Top"/>
-        <Label Content="Menu:" HorizontalAlignment="Left" Margin="154,45,0,0" VerticalAlignment="Top"/>
+        <Label Content="Ristorante"  FontSize="22" FontStyle="Italic" FontWeight="DemiBold" Foreground="DarkRed" HorizontalAlignment="Left" Margin="398,34,0,0" VerticalAlignment="Top"/>
+        <Label Content="Menu:" FontWeight="DemiBold" Foreground="DarkRed" HorizontalAlignment="Left" Margin="151,53,0,0" VerticalAlignment="Top"/>
         <TabControl HorizontalAlignment="Left" Height="443" Margin="10,89,0,0" VerticalAlignment="Top" Width="332" RenderTransformOrigin="0.491,0.582">
             <TabItem Header="Pizza">
                 <Grid Background="#FFE5E5E5">
                     <ListView Name="PizzasListView" ItemsSource="{Binding POCOPizzas}" Margin="0,0,0.4,-0.2" SelectedItem="{Binding ToBeAdded}">
-                        <!--<ListView.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
-                            </DataTemplate>
-                        </ListView.ItemTemplate>-->
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Danie">
@@ -49,7 +41,7 @@
                     </ListView>
                 </Grid>
             </TabItem>
-            <TabItem Header="Dodatki do pizzy">
+            <TabItem Header="Dodatki do pizzy" >
                 <Grid Background="#FFE5E5E5">
                     <ListView Name="PizzaToppingsListView" ItemsSource="{Binding POCOPizzaToppings}" Margin="0,0,0.4,-0.2" SelectedItem="{Binding ToBeAdded}">
                         <ListView.View>
@@ -73,7 +65,7 @@
                     </ListView>
                 </Grid>
             </TabItem>
-            <TabItem Header="Dania główne" Name="DaniaGlowneTab">
+            <TabItem Header="Dania główne" Name="DaniaGlowneTab" >
                 <Grid Background="#FFE5E5E5">
                     <ListView Name="MainCoursesListView" ItemsSource="{Binding POCOMainCourses}" Margin="0,0,0.4,-0.2" SelectedItem="{Binding ToBeAdded}">
                         <ListView.View>
@@ -177,7 +169,7 @@
         <TextBlock x:Name="ToBeRemovedTextBlock" TextWrapping="Wrap" Text="{Binding ToBeRemoved}" HorizontalAlignment="Left" Margin="381,358,0,0" VerticalAlignment="Top" Height="55" Width="144"/>
         <Button x:Name="UsunButton" Content="Usuń" HorizontalAlignment="Left" Margin="404,433,0,0" VerticalAlignment="Top" Width="92" Height="34" Command="{Binding RemoveSelectedProductFromOrderCommand}"/>
 
-        <Label Content="Twoje zamówienie:" HorizontalAlignment="Left" Margin="665,45,0,0" VerticalAlignment="Top"/>
+        <Label Content="Twoje zamówienie:" FontWeight="DemiBold" Foreground="DarkRed" HorizontalAlignment="Left" Margin="668,53,0,0" VerticalAlignment="Top"/>
         <ListView x:Name="OrderListView" ItemsSource="{Binding OrderProducts}" SelectedItem="{Binding ToBeRemoved}" HorizontalAlignment="Left" Height="214" Margin="564,89,0,0" VerticalAlignment="Top" Width="306">
             <ListView.View>
                 <GridView>
@@ -227,6 +219,7 @@
         <TextBlock x:Name="SummaryCostLabel" Text="{Binding Order.FinalCost, StringFormat=C2, ConverterCulture=pl-PL}" HorizontalAlignment="Left" Margin="770,425,0,0" VerticalAlignment="Top" Width="83" Height="36"/>
 
         <Button Content="Złóż zamówienie" IsEnabled="{Binding PlaceOrderEnabled}" HorizontalAlignment="Left" Margin="564,466,0,0" VerticalAlignment="Top" Width="306" Height="66" Command="{Binding PlaceOrderCommand}"/>
+        <Image HorizontalAlignment="Left" Height="51" Margin="536,22,0,0" VerticalAlignment="Top" Width="60" Source="/pizza_prz.png"/>
 
     </Grid>
 </Window>

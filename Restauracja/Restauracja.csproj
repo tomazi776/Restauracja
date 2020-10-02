@@ -47,6 +47,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.11.24.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.24\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Prism, Version=7.2.0.1422, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.7.2.0.1422\lib\net45\Prism.dll</HintPath>
     </Reference>
@@ -113,6 +116,7 @@
     <Compile Include="Services\ViewModelLocator.cs" />
     <Compile Include="Services\WindowService.cs" />
     <Compile Include="Utilities\CommandHandler.cs" />
+    <Compile Include="Utilities\EmailService.cs" />
     <Compile Include="Utilities\EmailValidator.cs" />
     <Compile Include="Utilities\IServiceLocator.cs" />
     <Compile Include="Utilities\ProductFactory.cs" />
@@ -185,7 +189,14 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="ristorante_footer_pattern.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="pizza_prz.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

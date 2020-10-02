@@ -47,25 +47,28 @@ namespace Restauracja.ViewModel
             }
         }
 
-        private string orderRemarks;
-        public string OrderRemarks
-        {
-            get
-            {
-                return orderRemarks;
-            }
-            set
-            {
-                SetProperty(ref orderRemarks, value);
-            }
-        }
-
         public List<IProduct> POCOPizzas { get; set; } = new List<IProduct>();
         public List<IProduct> POCOPizzaToppings { get; set; } = new List<IProduct>();
         public List<IProduct> POCOMainCourses { get; set; } = new List<IProduct>();
         public List<IProduct> POCOMainCourseSideDishes { get; set; } = new List<IProduct>();
         public List<IProduct> POCOSoups { get; set; } = new List<IProduct>();
         public List<IProduct> POCOBeverages { get; set; } = new List<IProduct>();
+
+        private bool tabSelected;
+
+        public bool TabSelected
+        {
+            get { return tabSelected; }
+            set 
+            {
+                if (tabSelected != value)
+                {
+                    SetProperty(ref tabSelected, value);
+                    ToBeAdded = null;
+                }
+            }
+        }
+
 
         private ProductPOCO toBeAdded;
         public ProductPOCO ToBeAdded
@@ -76,7 +79,10 @@ namespace Restauracja.ViewModel
             }
             set
             {
-                SetProperty(ref toBeAdded, value);
+                if (toBeAdded != value)
+                {
+                    SetProperty(ref toBeAdded, value);
+                }
             }
         }
 
@@ -102,7 +108,10 @@ namespace Restauracja.ViewModel
             }
             set
             {
-                SetProperty(ref toBeRemoved, value);
+                if (toBeRemoved != value)
+                {
+                    SetProperty(ref toBeRemoved, value);
+                }
             }
         }
 

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,16 +47,17 @@ namespace Restauracja.View
             //this.Close();
         }
 
+        //Uncoment for enable/disable btn to work (commentd for testing)
         private void RecipentTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //summaryOrderVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
-            var viewModel = this.DataContext;
-            var orderSummaryVm = viewModel as OrderSummaryViewModel;
+            ////summaryOrderVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
+            //var viewModel = this.DataContext;
+            //var orderSummaryVm = viewModel as OrderSummaryViewModel;
 
-            if (orderSummaryVm != null)
-            {
-                orderSummaryVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
-            }
+            //if (orderSummaryVm != null)
+            //{
+            //    orderSummaryVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
+            //}
         }
 
         private void SendMail_BtnClick(object sender, RoutedEventArgs e)
@@ -69,16 +71,35 @@ namespace Restauracja.View
                 return;
             }
 
+            //Add event for when the order is saved in DB
             orderSummaryVm.MakeOrder();
-            var emailBody = orderSummaryVm.ComposeEmailBody();
 
-            MailMessage email = new MailMessage(orderSummaryVm.Sender, orderSummaryVm.Recipent, OrderSummaryViewModel.EMAIL_SUBJECT, emailBody); // instead EmailBody
-            SmtpClient smtpClient = new SmtpClient(OrderSummaryViewModel.GMAIL_SMTP_HOST, OrderSummaryViewModel.GMAIL_SMTP_PORT);
+            //TODO: Send mail only if it's properly saved in the DB
+            //if (orderSummaryVm.OrderSaved)
+            //{
+            //    //do the rest
+            //}
 
-            if (orderSummaryVm.Sender != null && PassBox.SecurePassword != null)
+            orderSummaryVm.Recipent = "tomaszurbaniak776@gmail.com"; // for testing
+            orderSummaryVm.Sender = "urban776@gmail.com"; // for testing
+
+            EmailService emailGenerator = new EmailService(orderSummaryVm.Sender, orderSummaryVm.Recipent, orderSummaryVm.Order);
+            var emailBodyInHtml = emailGenerator.GenerateEmail();
+
+            MailMessage email = new MailMessage(orderSummaryVm.Sender, orderSummaryVm.Recipent); // instead EmailBody
+            email.IsBodyHtml = true;
+            email.Body = emailBodyInHtml;
+            email.Subject = OrderSummaryViewModel.EMAIL_SUBJECT;
+      
+            SmtpClient smtpClient = new SmtpClient(EmailService.GMAIL_SMTP_HOST, EmailService.GMAIL_SMTP_PORT);
+
+            //if (orderSummaryVm.Sender != null && PassBox.SecurePassword != null)
+            if (orderSummaryVm.Sender != null)
             {
                 smtpClient.UseDefaultCredentials = true;
-                smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, PassBox.SecurePassword);
+                //smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, PassBox.SecurePassword);
+                smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, "Junior77");
+
             }
             smtpClient.EnableSsl = true;
             smtpClient.Timeout = 10000;
@@ -86,6 +107,7 @@ namespace Restauracja.View
             {
                 smtpClient.Send(email);
             }
+            // handle timeout ex and authorization ex
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
