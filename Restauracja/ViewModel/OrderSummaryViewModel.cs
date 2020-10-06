@@ -121,7 +121,6 @@ namespace Restauracja.ViewModel
         {
             Sender = SingleCustomer.GetInstance().Email;
             //SendMailCommand = new CommandHandler(SendMail, () => true);
-
             eventAggregator.GetEvent<OrderMessageSentEvent>().Subscribe(OrderMessageReceived);
         }
 
@@ -143,9 +142,6 @@ namespace Restauracja.ViewModel
         //TODO: Why create new order if its already made in MenuViewModel?
         public void MakeOrder()
         {
-            OrderPOCO order = new OrderPOCO();
-            //OrderCost = order.GetOrderCost<ProductPOCO>(OrderSummaryProducts);
-            //order.FinalCost = order.GetOrderCost<ProductPOCO>(Order.Products);
             SaveOrderToDb();
             OnOrderSaved();
         }

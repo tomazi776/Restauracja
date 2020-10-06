@@ -107,7 +107,7 @@ namespace Restauracja.View
             {
                 smtpClient.Send(email);
             }
-            // handle timeout ex and authorization ex
+            // handle timeout ex and authorization ex and connection ex
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);

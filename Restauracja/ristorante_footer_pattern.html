@@ -17,8 +17,8 @@
         }
     </style>
 </head>
-<body style="font-family: Verdana, sans-serif; padding-top: 15px;">
-    <table>
+<body id="mainBody" style="font-family: Verdana, sans-serif; padding-top: 15px;">
+    <table id="mainTable">
         <tr>
             <td style=" 
     height: 400px; 
@@ -31,8 +31,8 @@
                 <table>
                     <tr>
                         <td>
-                            <table>
-                                <tr>
+                            <table id="contentsTable">
+                                <tr id="contentsRow">
                                     <td style="
                                         font-size: 18px;
                                         margin: auto;
@@ -42,37 +42,22 @@
                                         <img width="60" height="60" style="padding-right: 5px; padding-top: 3px;" src="https://icon-library.com/images/pizza-icon/pizza-icon-15.jpg" />
                                     </td>
                                 </tr>
-                                <tr style="font-size: 1.2em;">
+                                <tr id="contentsRow" style="font-size: 1.2em;">
                                     <td style=" text-decoration:none; color: rgb(153, 24, 24);">Nowe zamówienie klienta '$$CLIENT_EMAIL$$':</td>
                                 </tr>
 
 
-                                <tr>
-                                    <td>
-                                        <p style="
-                                            text-decoration: none;
-                                            color: #5a5d64;
-                                            margin-bottom: 3px;
-                                            padding-top: 25px;">$$PRODUCT_ONE$$</p>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <p style="text-decoration: none; color: #5a5d64; margin-bottom: 15px;">$$PRODUCT_TWO$$</p>
-                                    </td>
-                                </tr>
-
-                                <tr>
+                                <tr id="contentsRow">
                                     <td style="background-color: rgb(230, 230, 230);">
                                     </td>
                                 </tr>
-                                <tr>
+
+                                <tr id="contentsRow">
                                     <td style="padding-bottom: 2px; border-top: 2px; padding-top: 20px;">
                                         <p>Łączny koszt zamówienia: <strong style="color: rgb(153, 24, 24);">$$FINAL_COST$$</strong></p>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr id="contentsRow">
                                     <td style="padding-bottom: 20px;  padding-top: 20px;">
                                         <table style="background-color: rgb(230, 230, 230); table-layout: fixed; border-radius: 4px;">
                                             <tr>
@@ -82,30 +67,30 @@
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <p style="font-style: italic; color: #5a5d64;  margin-left: 10px; margin-bottom: 10px;">bez oreganen prosze</p>
+                                                    <p style="font-style: italic; color: #5a5d64;  margin-left: 10px; margin-bottom: 10px;">$$DESCRIPTION$$</p>
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr id="contentsRow">
                                     <td style="background-color: rgb(230, 230, 230);">
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr id="contentsRow">
                                     <td>
                                         <p style=" padding-top: 15px;">Kontakt:</p>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr id="contentsRow">
                                     <td>
                                         <img width="13" height="13" style="padding-right: 5px; padding-top: 3px; max-width: 13px; max-height: 13px;"
                                              src="https://icon-library.com/images/email-icon-jpg/email-icon-jpg-27.jpg" />
-                                        <a style="text-decoration: none; color: rgb(153, 24, 24);"
-                                           href="mailto:ab@sensesoft.eu">sentFrom@gmail.eu</a>
+                                        <a id="senderEmail" style="text-decoration: none; color: rgb(153, 24, 24);"
+                                           href="mailto:ab@sensesoft.eu">$$SENTFROM@MAIL$$</a>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr id="contentsRow">
                                     <td>
                                         <img height="13" width="13"
                                              style="padding-right: 5px; padding-top: 3px; max-width: 13px; max-height: 13px;"

@@ -25,7 +25,6 @@ namespace Restauracja.View
             Window orderWindow = new OrderSummaryWindow();
             orderWindow.DataContext = menuVm.OrderSummaryViewModel;
             orderWindow.Show();
-
             this.Close();
         }
     }
