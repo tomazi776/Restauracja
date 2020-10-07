@@ -18,19 +18,11 @@ namespace Restauracja.ViewModel
     public class OrderSummaryViewModel : BaseViewModel
     {
         public const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
-        //public const string GMAIL_SMTP_HOST = "smtp.gmail.com";
-        //const string CLIENT_ORDER_TEXT = "Zamówienie klienta '";
-        //const string ORDER_COST_TEXT = "Łączny koszt zamówienia: ";
-        //const string ORDER_REMARKS_TEXT = "Uwagi do zamówienia: ";
-        //const string DOUBLE_LINE_BREAK = "\r\n\r\n";
-        //const string SUMMARYLINE = "__________________________________";
-        //public const int GMAIL_SMTP_PORT = 587;
-
         public event EventHandler<EventArgs> OrderSaved;
-
 
         public ICommand SendMailCommand { get; }
         public ICommand BackCommand { get;}
+        public ICommand OrderHistoryCommand { get; set; }
 
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         public ObservableCollection<ProductPOCO> OrderSummaryProducts
@@ -61,7 +53,8 @@ namespace Restauracja.ViewModel
             }
         }
 
-        public MenuViewModel MenuViewModel { get; set; }
+        //public MenuViewModel MenuViewModel { get; set; }
+        public OrderHistoryViewModel HistoryVm { get; set; }
 
         private bool sendEnabled;
         public bool SendEnabled
@@ -119,9 +112,31 @@ namespace Restauracja.ViewModel
 
         public OrderSummaryViewModel(IEventAggregator eventAggregator)
         {
+            HistoryVm = new OrderHistoryViewModel();
             Sender = SingleCustomer.GetInstance().Email;
+
+            GetCachedData();
+            OrderHistoryCommand = new CommandHandler(OpenOrderHistory, () => true);
             //SendMailCommand = new CommandHandler(SendMail, () => true);
             eventAggregator.GetEvent<OrderMessageSentEvent>().Subscribe(OrderMessageReceived);
+        }
+
+        private void OpenOrderHistory()
+        {
+            
+        }
+
+        public void GetCachedData()
+        {
+            if (SingleOrder.Instance.Order != null)
+                Order = SingleOrder.Instance.Order;
+
+            if (SingleOrder.Instance.Order?.Products?.Count > 0)
+                OrderSummaryProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
+
+            //EnableDisablePlacingOrder(OrderProducts);
+
+            Console.WriteLine("Got data from cache (ORDERSUMMARY_VM)!!!!!!!!!!!!!!");
         }
 
         private void OrderMessageReceived(OrderPOCO obj)
@@ -145,37 +160,6 @@ namespace Restauracja.ViewModel
             SaveOrderToDb();
             OnOrderSaved();
         }
-
-        // This logic is in the codebehind for security reasons
-        //public void SendMail()
-        //{
-        //    OrderPOCO order = new OrderPOCO();
-        //    OrderCost = order.GetOrderCost<ProductPOCO>(OrderSummaryProducts);
-
-        //    GetOrderCost();
-        //    SaveOrderToDb();
-
-        //    var emailBody = ComposeEmailBody();
-
-        //    MailMessage email = new MailMessage(Sender, Recipent, EMAIL_SUBJECT, emailBody); // instead EmailBody
-        //    SmtpClient smtpClient = new SmtpClient(GMAIL_SMTP_HOST, GMAIL_SMTP_PORT);
-        //    if (Sender != null && PassPhrase != null)
-        //    {
-        //        smtpClient.UseDefaultCredentials = true;
-        //        smtpClient.Credentials = new NetworkCredential(Sender, PassPhrase);
-        //    }
-        //    smtpClient.EnableSsl = true;
-        //    smtpClient.Timeout = 10000;
-        //    try
-        //    {
-        //        smtpClient.Send(email);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        throw;
-        //    }
-        //}
 
         private void SaveOrderToDb()
         {

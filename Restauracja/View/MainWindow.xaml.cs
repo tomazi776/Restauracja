@@ -20,7 +20,6 @@ namespace Restauracja.View
 
         private void MenuVm_OrderPlaced(object sender, System.EventArgs e)
         {
-
             //TODO: Move this to code behind as it violates MVVM (no view info in VM!)
             Window orderWindow = new OrderSummaryWindow();
             orderWindow.DataContext = menuVm.OrderSummaryViewModel;

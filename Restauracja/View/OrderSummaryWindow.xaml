@@ -52,7 +52,7 @@
 
 
         <Button Content="Zapisz i wyślij zamówienie" IsEnabled="True" Command="{Binding SendMailCommand}" HorizontalAlignment="Left" Margin="574,466,0,0" VerticalAlignment="Top" Width="184" Height="77" Click="SendMail_BtnClick"/>
-        <Button Content="Historia zamówień" HorizontalAlignment="Left" Margin="698,26,0,0" VerticalAlignment="Top" Width="162" Height="50" Click="OrderHistoryButton_Click"/>
+        <Button Content="Historia zamówień" Command="{Binding OrderHistoryCommand}" HorizontalAlignment="Left" Margin="698,26,0,0" VerticalAlignment="Top" Width="162" Height="50" Click="OrderHistoryButton_Click"/>
         <Label Content="Hasło:" FontWeight="DemiBold" Foreground="DarkRed" HorizontalAlignment="Left" Margin="574,203,0,0" VerticalAlignment="Top" Width="56"/>
         <PasswordBox Name="PassBox" HorizontalAlignment="Left" Margin="574,234,0,0" VerticalAlignment="Top" Height="42" Width="185"/>
         <Label Content="Łącznie: " HorizontalAlignment="Left" Margin="171,384,0,0" VerticalAlignment="Top" Width="105"/>

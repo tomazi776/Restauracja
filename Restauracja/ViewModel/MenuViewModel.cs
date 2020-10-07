@@ -205,7 +205,7 @@ namespace Restauracja.ViewModel
 
             EnableDisablePlacingOrder(OrderProducts);
 
-            Console.WriteLine("Got data from cache!!!!!!!!!!!!!!");
+            Console.WriteLine("Got data from cache(MAIN_VM)!!!!!!!!!!!!!!");
         }
 
         // Order.Products instead of OrderProducts

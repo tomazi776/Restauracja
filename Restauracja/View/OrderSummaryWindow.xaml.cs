@@ -1,4 +1,5 @@
-﻿using Restauracja.Model;
+﻿using Prism.Events;
+using Restauracja.Model;
 using Restauracja.Utilities;
 using Restauracja.ViewModel;
 using System;
@@ -27,10 +28,15 @@ namespace Restauracja.View
     public partial class OrderSummaryWindow : Window
     {
         OrderSummaryViewModel summaryOrderVm;
+        IEventAggregator ea = new EventAggregator();
+
         public OrderSummaryWindow()
         {
             InitializeComponent();
-            summaryOrderVm = DataContext as OrderSummaryViewModel;
+            //summaryOrderVm = DataContext as OrderSummaryViewModel;
+
+            DataContext = summaryOrderVm = new OrderSummaryViewModel(ea);
+
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -42,9 +48,10 @@ namespace Restauracja.View
 
         private void OrderHistoryButton_Click(object sender, RoutedEventArgs e)
         {
-            Window orderHistoryWindow = new OrderHistoryWindow();
-            orderHistoryWindow.Show();
-            //this.Close();
+            Window historyWindow = new OrderHistoryWindow();
+            historyWindow.DataContext = summaryOrderVm.HistoryVm;
+            historyWindow.Show();
+            this.Close();
         }
 
         //Uncoment for enable/disable btn to work (commentd for testing)
@@ -83,13 +90,13 @@ namespace Restauracja.View
             orderSummaryVm.Recipent = "tomaszurbaniak776@gmail.com"; // for testing
             orderSummaryVm.Sender = "urban776@gmail.com"; // for testing
 
-            EmailService emailGenerator = new EmailService(orderSummaryVm.Sender, orderSummaryVm.Recipent, orderSummaryVm.Order);
-            var emailBodyInHtml = emailGenerator.GenerateEmail();
+            EmailService emailService = new EmailService(orderSummaryVm.Sender, orderSummaryVm.Recipent, orderSummaryVm.Order);
+            var emailBodyInHtml = emailService.GenerateEmail();
 
             MailMessage email = new MailMessage(orderSummaryVm.Sender, orderSummaryVm.Recipent); // instead EmailBody
             email.IsBodyHtml = true;
             email.Body = emailBodyInHtml;
-            email.Subject = OrderSummaryViewModel.EMAIL_SUBJECT;
+            email.Subject = EmailService.EMAIL_SUBJECT;
       
             SmtpClient smtpClient = new SmtpClient(EmailService.GMAIL_SMTP_HOST, EmailService.GMAIL_SMTP_PORT);
 
@@ -99,10 +106,10 @@ namespace Restauracja.View
                 smtpClient.UseDefaultCredentials = true;
                 //smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, PassBox.SecurePassword);
                 smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, "Junior77");
-
             }
             smtpClient.EnableSsl = true;
             smtpClient.Timeout = 10000;
+
             try
             {
                 smtpClient.Send(email);
