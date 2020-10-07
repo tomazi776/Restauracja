@@ -1,20 +1,28 @@
-﻿using Restauracja.Model;
+﻿using Prism.Events;
+using Restauracja.Model;
 using Restauracja.Model.Entities;
 using Restauracja.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
+using System.Windows;
 using System.Windows.Input;
+using static Restauracja.ViewModel.MenuViewModel;
 
 namespace Restauracja.ViewModel
 {
     public class OrderSummaryViewModel : BaseViewModel
     {
-        const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
-        const string GMAIL_SMTP_HOST = "smtp.gmail.com";
-        const int GMAIL_SMTP_PORT = 587;
+        public const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
+        public event EventHandler<EventArgs> OrderSaved;
+
         public ICommand SendMailCommand { get; }
+        public ICommand BackCommand { get;}
+        public ICommand OrderHistoryCommand { get; set; }
 
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         public ObservableCollection<ProductPOCO> OrderSummaryProducts
@@ -22,9 +30,31 @@ namespace Restauracja.ViewModel
             get { return orderProducts; }
             set
             {
-                SetProperty(ref orderProducts, value);
+                if (orderProducts != value)
+                {
+                    SetProperty(ref orderProducts, value);
+                    SingleOrder.Instance.OrderProducts = value;
+                    SingleOrder.Instance.Order = this.Order;
+                }
             }
         }
+
+        private OrderPOCO order = new OrderPOCO();
+        public OrderPOCO Order
+        {
+            get { return order; }
+            set
+            {
+                if (order != value)
+                {
+                    SetProperty(ref order, value);
+                    SingleOrder.Instance.Order = value;
+                }
+            }
+        }
+
+        //public MenuViewModel MenuViewModel { get; set; }
+        public OrderHistoryViewModel HistoryVm { get; set; }
 
         private bool sendEnabled;
         public bool SendEnabled
@@ -33,21 +63,6 @@ namespace Restauracja.ViewModel
             set 
             {
                 SetProperty(ref sendEnabled, value);
-            }
-        }
-
-        public OrderPOCO PlacedOrder { get; set; }
-
-        private string orderRemarks;
-        public string OrderRemarks
-        {
-            get
-            {
-                return orderRemarks;
-            }
-            set
-            {
-                SetProperty(ref orderRemarks, value);
             }
         }
 
@@ -67,18 +82,11 @@ namespace Restauracja.ViewModel
             get { return sender; }
             set
             {
-                SetProperty(ref sender, value);
-                SingleCustomer.GetInstance().Email = sender;
-            }
-        }
-
-        private string passPhrase;
-        public string PassPhrase
-        {
-            get { return passPhrase; }
-            set
-            {
-                SetProperty(ref passPhrase, value); 
+                if (sender != value)
+                {
+                    SetProperty(ref sender, value);
+                    //SingleCustomer.GetInstance().Email = sender; //uncoment after testing
+                }
             }
         }
 
@@ -102,37 +110,55 @@ namespace Restauracja.ViewModel
             }
         }
 
-        public OrderSummaryViewModel(ObservableCollection<ProductPOCO> products, string remarks)
+        public OrderSummaryViewModel(IEventAggregator eventAggregator)
         {
-            OrderSummaryProducts = products;
-            OrderRemarks = remarks;
+            HistoryVm = new OrderHistoryViewModel();
             Sender = SingleCustomer.GetInstance().Email;
-            SendMailCommand = new CommandHandler(SendMail, () => true);
+
+            GetCachedData();
+            OrderHistoryCommand = new CommandHandler(OpenOrderHistory, () => true);
+            //SendMailCommand = new CommandHandler(SendMail, () => true);
+            eventAggregator.GetEvent<OrderMessageSentEvent>().Subscribe(OrderMessageReceived);
         }
 
-        public void SendMail()
+        private void OpenOrderHistory()
         {
-            GetOrderCost();
-            SaveOrderToDb();
-            ComposeEmailBody();
+            
+        }
 
-            MailMessage email = new MailMessage(Sender, Recipent, EMAIL_SUBJECT, EmailBody);
-            SmtpClient smtpClient = new SmtpClient(GMAIL_SMTP_HOST, GMAIL_SMTP_PORT);
-            if (Sender != null && PassPhrase != null)
+        public void GetCachedData()
+        {
+            if (SingleOrder.Instance.Order != null)
+                Order = SingleOrder.Instance.Order;
+
+            if (SingleOrder.Instance.Order?.Products?.Count > 0)
+                OrderSummaryProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
+
+            //EnableDisablePlacingOrder(OrderProducts);
+
+            Console.WriteLine("Got data from cache (ORDERSUMMARY_VM)!!!!!!!!!!!!!!");
+        }
+
+        private void OrderMessageReceived(OrderPOCO obj)
+        {
+            order = obj;
+            OrderSummaryProducts = new ObservableCollection<ProductPOCO>(order.Products);
+        }
+
+
+        protected virtual void OnOrderSaved()
+        {
+            if (OrderSaved != null)
             {
-                smtpClient.Credentials = new NetworkCredential(Sender, PassPhrase);
+                OrderSaved.Invoke(this, EventArgs.Empty);
             }
-            smtpClient.EnableSsl = true;
-            smtpClient.Timeout = 10000;
-            try
-            {
-                smtpClient.Send(email);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw;
-            }
+        }
+
+        //TODO: Why create new order if its already made in MenuViewModel?
+        public void MakeOrder()
+        {
+            SaveOrderToDb();
+            OnOrderSaved();
         }
 
         private void SaveOrderToDb()
@@ -140,11 +166,8 @@ namespace Restauracja.ViewModel
             using (var dbContext = new RestaurantDataContext())
             {
                 Customer newCustomer = new Customer(Sender);
-                Order newlyPlacedOrder = new Order(OrderCost, OrderRemarks, DateTime.Now);
-
+                Order newlyPlacedOrder = new Order(Order.FinalCost, Order.Description, DateTime.Now);
                 newlyPlacedOrder.Customer = newCustomer;
-                newlyPlacedOrder.FinalCost = OrderCost;
-                newlyPlacedOrder.Description = OrderRemarks;
 
                 foreach (var prod in OrderSummaryProducts)
                 {
@@ -152,37 +175,25 @@ namespace Restauracja.ViewModel
                     newlyPlacedOrder.OrderItem.Add(orderItem);
                 }
                 dbContext.Orders.Add(newlyPlacedOrder);
-                dbContext.SaveChanges();
+
+                try
+                {
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    //TODO: Logging mechanism
+                    Console.WriteLine("BŁĄD ZAPISU DO BAZY DANYCH - " + ex.Message);
+                    MessageBox.Show("Nie można zapisać zamówienia w bazie danych," +
+                        "/r/n sprawdź logi w pliku logs.txt lub skontaktuj się z administratorem.", "Błąd");
+                    throw;
+                }
             }
         }
 
         private OrderItem MapToOrderItem(ProductPOCO pocoProduct)
         {
             return new OrderItem(pocoProduct.Name, pocoProduct.Price, pocoProduct.Quantity, pocoProduct.Description, pocoProduct.Remarks);
-        }
-
-        private void ComposeEmailBody()
-        {
-            EmailBody = "Zamówienie klienta '" + Sender + "':" + "\n";
-            foreach (var product in OrderSummaryProducts)
-            {
-                EmailBody += "\n" + product.Name + " - " + product.Price.ToString() + "zł x " + product.Quantity +  " = " + product.Quantity * product.Price + " zł";
-            }
-            EmailBody += "\n" + "\n" + "Łączny koszt zamówienia: " + OrderCost + " zł";
-            EmailBody += "\n" + "\n" + "Uwagi do zamówienia: " + OrderRemarks;
-        }
-
-        private void GetOrderCost()
-        {
-            int orderCost = 0;
-            foreach (var prod in OrderSummaryProducts)
-            {
-                for (int i = 0; i < prod.Quantity; i++)
-                {
-                    orderCost += prod.Price;
-                }
-            }
-            OrderCost = orderCost;
         }
     }
 }

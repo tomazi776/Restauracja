@@ -10,7 +10,7 @@ namespace Restauracja.Model.Entities
     {
         [Key]
         public int Id { get; set; }
-        public int FinalCost { get; set; }
+        public decimal FinalCost { get; set; }
         public string Description { get; set; }
         //public string CustomerName { get; set; }  // Maybe necessary to add
         public Customer Customer { get; set; }
@@ -19,12 +19,11 @@ namespace Restauracja.Model.Entities
 
         public virtual ICollection<OrderItem> OrderItem { get; set; }   // Navigation property to OrderItem
 
-        public Order( int finalCost, string description, DateTime date)
+        public Order( decimal finalCost, string description, DateTime date)
         {
             FinalCost = finalCost;
             Description = description;
             Date = date;
-
             this.OrderItem = new HashSet<OrderItem>();
         }
 

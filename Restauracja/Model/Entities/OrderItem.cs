@@ -10,18 +10,15 @@ namespace Restauracja.Model.Entities
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
         public string Description { get; set; }
-
         public int Quantity { get; set; }
-
         public string Remarks { get; set; }
-
         public int OrderId { get; set; }  // Foreign Key to Order
         public Order Order { get; set; }
 
 
-        public OrderItem(string name, int price, int quantity = 1, string description = "", string remarks = "")
+        public OrderItem(string name, decimal price, int quantity = 1, string description = "", string remarks = "")
         {
             Name = name;
             Price = price;

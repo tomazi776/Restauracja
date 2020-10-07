@@ -1,9 +1,10 @@
 ﻿<Application x:Class="Restauracja.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Restauracja.ViewModel"
              xmlns:local="clr-namespace:Restauracja"
-             StartupUri="MainWindow.xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
+             StartupUri="View/MainWindow.xaml">
+    <!--<Application.Resources>
+        <vm:MenuViewModel x:Key="MenuViewModel" />
+    </Application.Resources>-->
 </Application>

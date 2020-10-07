@@ -21,7 +21,7 @@
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        FinalCost = c.Int(nullable: false),
+                        FinalCost = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Description = c.String(),
                         Date = c.DateTime(nullable: false),
                         Customer_Customer_Id = c.Int(),
@@ -36,7 +36,7 @@
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
-                        Price = c.Int(nullable: false),
+                        Price = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Description = c.String(),
                         Quantity = c.Int(nullable: false),
                         Remarks = c.String(),
@@ -52,9 +52,9 @@
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
+                        Price = c.Decimal(nullable: false, precision: 18, scale: 2),
                         ProductType = c.Int(nullable: false),
                         Description = c.String(),
-                        Price = c.Int(nullable: false),
                         Remarks = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
