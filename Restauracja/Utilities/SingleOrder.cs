@@ -12,10 +12,7 @@ namespace Restauracja.Utilities
     {
         public  ObservableCollection<ProductPOCO> OrderProducts { get; set; }
         public OrderPOCO Order { get; set; }
-        private SingleOrder()
-        {
-
-        }
+        private SingleOrder() { }
 
         private static SingleOrder instance = null;
         private static readonly object padlock = new object();

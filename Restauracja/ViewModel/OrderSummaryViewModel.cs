@@ -109,7 +109,7 @@ namespace Restauracja.ViewModel
 
         public OrderSummaryViewModel(IEventAggregator eventAggregator)
         {
-            Sender = SingleCustomer.GetInstance().Email;
+            Sender = SingleCustomer.Instance.Email;
 
             GetCachedData();
             OrderHistoryCommand = new CommandHandler(OpenOrderHistory, () => true);
