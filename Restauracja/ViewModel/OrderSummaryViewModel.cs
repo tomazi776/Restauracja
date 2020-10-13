@@ -1,6 +1,7 @@
 ﻿using Prism.Events;
 using Restauracja.Model;
 using Restauracja.Model.Entities;
+using Restauracja.Services;
 using Restauracja.Utilities;
 using System;
 using System.Collections.Generic;
@@ -180,10 +181,11 @@ namespace Restauracja.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    //TODO: Logging mechanism
-                    MessageBox.Show("Nie można zapisać zamówienia w bazie danych," + "Szczegóły:" + ex.Message + 
-                        "/r/n sprawdź logi w pliku logs.txt lub skontaktuj się z administratorem.", "Błąd");
-                    throw;
+                    Logger.Log(LogTarget.File, ex);
+                    Logger.Log(LogTarget.EventLog, ex);
+
+                    // Handle cases of exceptions to inform user of the problem
+                    MessageBox.Show(@"Could not save the order in the database - check 'Logs.txt' file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
                 }
             }
         }

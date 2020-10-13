@@ -1,5 +1,6 @@
 ﻿using Prism.Events;
 using Restauracja.Model;
+using Restauracja.Services;
 using Restauracja.Utilities;
 using Restauracja.ViewModel;
 using System;
@@ -111,8 +112,11 @@ namespace Restauracja.View
             // handle timeout ex and authorization ex and connection ex
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                throw;
+                Logger.Log(LogTarget.File, ex);
+                Logger.Log(LogTarget.EventLog, ex);
+
+                // Handle cases of exceptions to inform user of the problem
+                MessageBox.Show(@"Could not send an email - ensure you have internet connection. If so - check Logs.txt file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
             }
         }
     }
