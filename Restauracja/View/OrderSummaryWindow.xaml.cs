@@ -22,14 +22,23 @@ using System.Windows.Shapes;
 
 namespace Restauracja.View
 {
-    /// <summary>
-    /// Interaction logic for OrderSummaryWindow.xaml
-    /// </summary>
     public partial class OrderSummaryWindow : Window
     {
         public OrderSummaryWindow()
         {
             InitializeComponent();
+            this.Loaded += OrderSummaryWindow_Loaded;
+        }
+
+        private void OrderSummaryWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var orderSummaryVm = this.DataContext as OrderSummaryViewModel;
+            if (orderSummaryVm is null)
+            {
+                Console.WriteLine("Viewmodel is null!");
+                return;
+            }
+            orderSummaryVm.OrderSaved += SendEmailOnOrderSaved;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -59,29 +68,17 @@ namespace Restauracja.View
             //}
         }
 
-        private void SendMail_BtnClick(object sender, RoutedEventArgs e)
-        {
-            var viewModel = this.DataContext;
-            var orderSummaryVm = viewModel as OrderSummaryViewModel;
 
+        private void SendEmailOnOrderSaved(object sender, EventArgs e)
+        {
+            var orderSummaryVm = this.DataContext as OrderSummaryViewModel;
             if (orderSummaryVm is null)
             {
                 Console.WriteLine("Viewmodel is null!");
                 return;
             }
 
-            orderSummaryVm.Sender = "urban776@gmail.com"; // for testing
-
-
-            //Add event for when the order is saved in DB
-            orderSummaryVm.MakeOrder();
-
-            //TODO: Send mail only if it's properly saved in the DB
-            //if (orderSummaryVm.OrderSaved)
-            //{
-            //    //do the rest
-            //}
-
+            //orderSummaryVm.Sender = "urban776@gmail.com"; // for testing
             orderSummaryVm.Recipent = "tomaszurbaniak776@gmail.com"; // for testing
 
             EmailService emailService = new EmailService(orderSummaryVm.Sender, orderSummaryVm.Recipent, orderSummaryVm.Order);
@@ -91,9 +88,8 @@ namespace Restauracja.View
             email.IsBodyHtml = true;
             email.Body = emailBodyInHtml;
             email.Subject = EmailService.EMAIL_SUBJECT;
-      
-            SmtpClient smtpClient = new SmtpClient(EmailService.GMAIL_SMTP_HOST, EmailService.GMAIL_SMTP_PORT);
 
+            SmtpClient smtpClient = new SmtpClient(EmailService.GMAIL_SMTP_HOST, EmailService.GMAIL_SMTP_PORT);
             //if (orderSummaryVm.Sender != null && PassBox.SecurePassword != null)
             if (orderSummaryVm.Sender != null)
             {
@@ -107,8 +103,9 @@ namespace Restauracja.View
             try
             {
                 smtpClient.Send(email);
+                MessageBox.Show($"Twoje zamówienie zostało zapisane i wysłane na email '{orderSummaryVm.Recipent}'", "Sukces!");
             }
-            // handle timeout ex and authorization ex and connection ex
+            // handle timeout ex and authorization ex and connection ex, and log them
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);

@@ -51,7 +51,7 @@
         <Label Name="UwagiTextBox" Background="WhiteSmoke"  BorderThickness="1" BorderBrush="LightGray" HorizontalAlignment="Left" Content="{Binding Order.Description}"  Margin="180,466,0,0" VerticalAlignment="Top" Height="77" Width="313"/>
 
 
-        <Button Content="Zapisz i wyślij zamówienie" IsEnabled="True" Command="{Binding SendMailCommand}" HorizontalAlignment="Left" Margin="574,466,0,0" VerticalAlignment="Top" Width="184" Height="77" Click="SendMail_BtnClick"/>
+        <Button Content="Zapisz i wyślij zamówienie" IsEnabled="True" Command="{Binding FinalizeOrderCommand}" HorizontalAlignment="Left" Margin="574,466,0,0" VerticalAlignment="Top" Width="184" Height="77" />
         <Button Content="Historia zamówień" Command="{Binding OrderHistoryCommand}" HorizontalAlignment="Left" Margin="698,26,0,0" VerticalAlignment="Top" Width="162" Height="50" Click="OrderHistoryButton_Click"/>
         <Label Content="Hasło:" FontWeight="DemiBold" Foreground="DarkRed" HorizontalAlignment="Left" Margin="574,203,0,0" VerticalAlignment="Top" Width="56"/>
         <PasswordBox Name="PassBox" HorizontalAlignment="Left" Margin="574,234,0,0" VerticalAlignment="Top" Height="42" Width="185"/>

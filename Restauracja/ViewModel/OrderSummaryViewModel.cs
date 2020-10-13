@@ -20,7 +20,7 @@ namespace Restauracja.ViewModel
         public const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
         public event EventHandler<EventArgs> OrderSaved;
 
-        public ICommand SendMailCommand { get; }
+        public ICommand FinalizeOrderCommand { get; }
         public ICommand BackCommand { get;}
         public ICommand OrderHistoryCommand { get; set; }
 
@@ -113,7 +113,7 @@ namespace Restauracja.ViewModel
 
             GetCachedData();
             OrderHistoryCommand = new CommandHandler(OpenOrderHistory, () => true);
-            //SendMailCommand = new CommandHandler(SendMail, () => true);
+            FinalizeOrderCommand = new CommandHandler(SaveOrderToDb, () => true);
             eventAggregator.GetEvent<OrderMessageSentEvent>().Subscribe(OrderMessageReceived);
         }
 
@@ -140,7 +140,6 @@ namespace Restauracja.ViewModel
             OrderSummaryProducts = new ObservableCollection<ProductPOCO>(Order.Products);
         }
 
-
         protected virtual void OnOrderSaved()
         {
             if (OrderSaved != null)
@@ -149,18 +148,13 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //TODO: Why make new order if its already made in MenuViewModel?
+        //TODO: Why make new order if its already made in MenuViewModel and sent here?
         // Cause its needed now to map an OrderPOCO to Order object
-        public void MakeOrder()
-        {
-            SaveOrderToDb();
-            OnOrderSaved();
-        }
-
         private void SaveOrderToDb()
         {
             using (var dbContext = new RestaurantDataContext())
             {
+                Sender = "urban776@gmail.com"; // for testing
                 Customer newCustomer = new Customer(Sender);
 
                 // Rethink having separate Entity and Domain objects (Order / OrderPOCO)
@@ -177,6 +171,7 @@ namespace Restauracja.ViewModel
                 try
                 {
                     dbContext.SaveChanges();
+                    OnOrderSaved();
                 }
                 catch (Exception ex)
                 {
