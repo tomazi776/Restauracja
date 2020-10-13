@@ -27,16 +27,9 @@ namespace Restauracja.View
     /// </summary>
     public partial class OrderSummaryWindow : Window
     {
-        OrderSummaryViewModel summaryOrderVm;
-        IEventAggregator ea = new EventAggregator();
-
         public OrderSummaryWindow()
         {
             InitializeComponent();
-            //summaryOrderVm = DataContext as OrderSummaryViewModel;
-
-            DataContext = summaryOrderVm = new OrderSummaryViewModel(ea);
-
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -49,7 +42,6 @@ namespace Restauracja.View
         private void OrderHistoryButton_Click(object sender, RoutedEventArgs e)
         {
             Window historyWindow = new OrderHistoryWindow();
-            historyWindow.DataContext = summaryOrderVm.HistoryVm;
             historyWindow.Show();
             this.Close();
         }
@@ -78,6 +70,9 @@ namespace Restauracja.View
                 return;
             }
 
+            orderSummaryVm.Sender = "urban776@gmail.com"; // for testing
+
+
             //Add event for when the order is saved in DB
             orderSummaryVm.MakeOrder();
 
@@ -88,7 +83,6 @@ namespace Restauracja.View
             //}
 
             orderSummaryVm.Recipent = "tomaszurbaniak776@gmail.com"; // for testing
-            orderSummaryVm.Sender = "urban776@gmail.com"; // for testing
 
             EmailService emailService = new EmailService(orderSummaryVm.Sender, orderSummaryVm.Recipent, orderSummaryVm.Order);
             var emailBodyInHtml = emailService.GenerateEmail();

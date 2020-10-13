@@ -53,9 +53,6 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //public MenuViewModel MenuViewModel { get; set; }
-        public OrderHistoryViewModel HistoryVm { get; set; }
-
         private bool sendEnabled;
         public bool SendEnabled
         {
@@ -112,7 +109,6 @@ namespace Restauracja.ViewModel
 
         public OrderSummaryViewModel(IEventAggregator eventAggregator)
         {
-            HistoryVm = new OrderHistoryViewModel();
             Sender = SingleCustomer.GetInstance().Email;
 
             GetCachedData();
@@ -135,14 +131,13 @@ namespace Restauracja.ViewModel
                 OrderSummaryProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
 
             //EnableDisablePlacingOrder(OrderProducts);
-
             Console.WriteLine("Got data from cache (ORDERSUMMARY_VM)!!!!!!!!!!!!!!");
         }
 
         private void OrderMessageReceived(OrderPOCO obj)
         {
-            order = obj;
-            OrderSummaryProducts = new ObservableCollection<ProductPOCO>(order.Products);
+            Order = obj;
+            OrderSummaryProducts = new ObservableCollection<ProductPOCO>(Order.Products);
         }
 
 
@@ -154,7 +149,8 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //TODO: Why create new order if its already made in MenuViewModel?
+        //TODO: Why make new order if its already made in MenuViewModel?
+        // Cause its needed now to map an OrderPOCO to Order object
         public void MakeOrder()
         {
             SaveOrderToDb();
@@ -166,6 +162,8 @@ namespace Restauracja.ViewModel
             using (var dbContext = new RestaurantDataContext())
             {
                 Customer newCustomer = new Customer(Sender);
+
+                // Rethink having separate Entity and Domain objects (Order / OrderPOCO)
                 Order newlyPlacedOrder = new Order(Order.FinalCost, Order.Description, DateTime.Now);
                 newlyPlacedOrder.Customer = newCustomer;
 
@@ -183,8 +181,7 @@ namespace Restauracja.ViewModel
                 catch (Exception ex)
                 {
                     //TODO: Logging mechanism
-                    Console.WriteLine("BŁĄD ZAPISU DO BAZY DANYCH - " + ex.Message);
-                    MessageBox.Show("Nie można zapisać zamówienia w bazie danych," +
+                    MessageBox.Show("Nie można zapisać zamówienia w bazie danych," + "Szczegóły:" + ex.Message + 
                         "/r/n sprawdź logi w pliku logs.txt lub skontaktuj się z administratorem.", "Błąd");
                     throw;
                 }

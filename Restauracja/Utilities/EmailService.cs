@@ -129,7 +129,9 @@ namespace Restauracja.Utilities
                 paddingVal = 25;
             if (Order.Products.IndexOf(currProd) == Order.Products.Count - 1)
                 marginVal = 15;
-            return productNode.Replace("$$MARGIN_BOTTOM$$", marginVal.ToString()).Replace("$$PADDING_TOP$$", paddingVal.ToString());
+            return productNode
+                .Replace("$$MARGIN_BOTTOM$$", marginVal.ToString())
+                .Replace("$$PADDING_TOP$$", paddingVal.ToString());
         }
 
         private string InsertDataTo(string productNode, ProductPOCO prod)

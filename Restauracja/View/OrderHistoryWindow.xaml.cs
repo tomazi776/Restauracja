@@ -18,7 +18,7 @@ namespace Restauracja.View
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             OrderSummaryWindow orderSummaryWindow = new OrderSummaryWindow();
-            //orderSummaryWindow.DataContext = 
+            orderSummaryWindow.DataContext = new OrderSummaryViewModel(ea);
             orderSummaryWindow.Show();
             this.Close();
         }

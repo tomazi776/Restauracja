@@ -57,6 +57,8 @@ namespace Restauracja.ViewModel
                 OrderItems.Clear();
             }
         }
+
+
         public OrderHistoryViewModel()
         {
             GetOrderHistory();

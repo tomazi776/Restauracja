@@ -182,7 +182,6 @@ namespace Restauracja.ViewModel
                 case MessageBoxResult.Yes:
                     OrderSummaryViewModel = new OrderSummaryViewModel(eventAggregator);
 
-                    // TODO: Replace with one event sending aggregated data in one Order Object
                     eventAggregator.GetEvent<OrderMessageSentEvent>().Publish(Order);
                     
                     OnOrderPlaced();
@@ -232,7 +231,7 @@ namespace Restauracja.ViewModel
 
                 if (!Order.Products.Contains(ToBeAdded))
                 {
-                    Order.Products.Add(ToBeAdded); // for data to be passed further passed
+                    Order.Products.Add(ToBeAdded); // for data to be passed further
                     OrderProducts.Add(ToBeAdded); // for display in this View
                 }
                 else
@@ -241,7 +240,6 @@ namespace Restauracja.ViewModel
                 }
             }
             EnableDisablePlacingOrder(OrderProducts);
-
             UpdateSummaryCost();
         }
 

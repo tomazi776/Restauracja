@@ -11,7 +11,6 @@ namespace Restauracja.Utilities
             switch (product.ProductType)
             {
                 case ProductType.Pizza:
-                    //pocoProduct = new Pizza(product.Name, product.Price, product.Remarks);
                     pocoProduct = new Pizza(product.Name, product.Price, product.Remarks);
                     break;
 

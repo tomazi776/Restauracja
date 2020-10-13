@@ -57,18 +57,5 @@ namespace Restauracja.Model
             }
             return orderCost;
         }
-
-        //public int GetOrderCost<ProductPOCO>(ObservableCollection<Model.ProductPOCO> orderSummaryProducts)
-        //{
-        //    int orderCost = 0;
-        //    foreach (var prod in orderSummaryProducts)
-        //    {
-        //        for (int i = 0; i < prod.Quantity; i++)
-        //        {
-        //            orderCost += prod.Price;
-        //        }
-        //    }
-        //    return orderCost;
-        //}
     }
 }
