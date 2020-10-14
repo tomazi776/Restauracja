@@ -91,6 +91,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="RestaurantInitializer.cs" />
     <Compile Include="Utilities\DbLogger.cs" />
     <Compile Include="Utilities\EventLogger.cs" />
     <Compile Include="Utilities\FileLogger.cs" />
