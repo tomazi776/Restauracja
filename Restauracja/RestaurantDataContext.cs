@@ -1,5 +1,6 @@
 namespace Restauracja
 {
+    using Restauracja.Migrations;
     using Restauracja.Model.Entities;
     using System;
     using System.Data.Entity;
@@ -16,6 +17,9 @@ namespace Restauracja
         public RestaurantDataContext()
             : base("name=RestaurantDataContext")
         {
+            //Database.SetInitializer<RestaurantDataContext>(new DropCreateDatabaseAlways<RestaurantDataContext>());
+            Database.SetInitializer(new RestaurantInitializer());
+            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<RestaurantDataContext, Configuration>());
         }
 
         // Add a DbSet for each entity type that you want to include in your model. For more information 
