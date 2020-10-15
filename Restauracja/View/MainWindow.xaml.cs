@@ -1,6 +1,4 @@
-﻿using Prism.Events;
-using Restauracja.View;
-using Restauracja.ViewModel;
+﻿using Restauracja.ViewModel;
 using System.Windows;
 
 namespace Restauracja.View
@@ -8,11 +6,10 @@ namespace Restauracja.View
     public partial class MainWindow : Window
     {
         MenuViewModel menuVm;
-        IEventAggregator ea = new EventAggregator();
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = menuVm = new MenuViewModel(ea);
+            DataContext = menuVm = new MenuViewModel();
             menuVm.OrderPlaced += MenuVm_OrderPlaced;
         }
 

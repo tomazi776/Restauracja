@@ -1,9 +1,6 @@
-﻿using Prism.Events;
-using Restauracja.Model;
+﻿using Restauracja.Model;
 using Restauracja.Model.Entities;
-using Restauracja.Services;
 using Restauracja.Utilities;
-using Restauracja.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,21 +16,16 @@ namespace Restauracja.ViewModel
         public ICommand AddSelectedProductToOrderCommand { get; set; }
         public ICommand RemoveSelectedProductFromOrderCommand { get; set; }
         public ICommand PlaceOrderCommand { get; set; }
-        private readonly IEventAggregator eventAggregator;
 
         public const string WELCOME_MESSAGE_HEADER = "Zamówienie już prawie złożone!";
         public const string WELCOME_MESSAGE_CONTENT = "Teraz tylko podaj maila, w celu wysłania zamówienia, mniam!";
         public const string CONFIRMATION_PROMPT_CONTENT = "Czy na pewno chcesz złożyć to zamówienie?";
         public const string CONFIRMATION_PROMPT_HEADER = "Uwaga";
 
-        //private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         public ObservableCollection<ProductPOCO> OrderProducts
         {
-            get
-            {
-                return orderProducts;
-            }
+            get => orderProducts;
             set
             {
                 if (orderProducts != value)
@@ -54,7 +46,7 @@ namespace Restauracja.ViewModel
 
         public bool TabSelected
         {
-            get { return tabSelected; }
+            get => tabSelected;
             set 
             {
                 if (tabSelected != value)
@@ -65,14 +57,10 @@ namespace Restauracja.ViewModel
             }
         }
 
-
         private ProductPOCO toBeAdded;
         public ProductPOCO ToBeAdded
         {
-            get
-            {
-                return toBeAdded;
-            }
+            get => toBeAdded;
             set
             {
                 if (toBeAdded != value)
@@ -85,7 +73,7 @@ namespace Restauracja.ViewModel
         private bool placeOrderEnabled;
         public bool PlaceOrderEnabled
         {
-            get { return placeOrderEnabled; }
+            get => placeOrderEnabled;
             set
             {
                 if (placeOrderEnabled != value)
@@ -98,10 +86,7 @@ namespace Restauracja.ViewModel
         private ProductPOCO toBeRemoved;
         public ProductPOCO ToBeRemoved
         {
-            get
-            {
-                return toBeRemoved;
-            }
+            get => toBeRemoved;
             set
             {
                 if (toBeRemoved != value)
@@ -114,11 +99,7 @@ namespace Restauracja.ViewModel
         private OrderPOCO order = new OrderPOCO();
         public OrderPOCO Order
         {
-            get 
-            {
-                // See? Getter doesn't need logic to get data from Singleton if not null - Instead set its data in ctor()
-                return order;
-            }
+            get => order;
             set 
             {
                 if (order != value)
@@ -130,17 +111,14 @@ namespace Restauracja.ViewModel
 
         public OrderSummaryViewModel OrderSummaryViewModel { get; set; }
 
-        public MenuViewModel(IEventAggregator ea)
+        public MenuViewModel()
         {
-            this.eventAggregator = ea;
             AddSelectedProductToOrderCommand = new CommandHandler(AddSelectedProductToOrder, () => true);
             RemoveSelectedProductFromOrderCommand = new CommandHandler(RemoveSelectedProductFromOrder, () => true);
 
             PlaceOrderCommand = new CommandHandler(PlaceOrder, () => true);
 
             GetCachedData();
-
-            //locator = new ServiceLocator();
 
             GetProducts(ProductType.Pizza, POCOPizzas);
             GetProducts(ProductType.PizzaTopping, POCOPizzaToppings);
@@ -162,13 +140,9 @@ namespace Restauracja.ViewModel
 
         // TODO: Use just events or EventAggregator
         public event EventHandler<OrderEventArgs> OrderPlacedWithData;
-        public virtual void OnOrderPlacedWithData()
-        {
-            if (OrderPlacedWithData != null)
-            {
-                OrderPlacedWithData.Invoke(this, new OrderEventArgs() { Order = Order });
-            }
-        }
+
+        // Expression-bodied member syntax with nullcheck
+        protected virtual void OnOrderPlacedWithData() => OrderPlacedWithData?.Invoke(this, new OrderEventArgs() { Order = Order });
 
         private void PlaceOrder()
         {
@@ -176,15 +150,10 @@ namespace Restauracja.ViewModel
             switch (result)
             {
                 case MessageBoxResult.Yes:
-                    OrderSummaryViewModel = new OrderSummaryViewModel(eventAggregator);
-
-                    eventAggregator.GetEvent<OrderMessageSentEvent>().Publish(Order);
-                    
+                    //Pass Order via DI
+                    OrderSummaryViewModel = new OrderSummaryViewModel(Order);
+                    //Pass Order via event  
                     OnOrderPlaced();
-
-                    //IWindowService windowService = locator.GetService<IWindowService>();
-                    //windowService.ShowWindow(this);
-
                     MessageBox.Show(WELCOME_MESSAGE_CONTENT, WELCOME_MESSAGE_HEADER);
                     break;
             }
@@ -199,7 +168,6 @@ namespace Restauracja.ViewModel
                 OrderProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
 
             EnableDisablePlacingOrder(OrderProducts);
-
             Console.WriteLine("Got data from cache(MAIN_VM)!!!!!!!!!!!!!!");
         }
 
@@ -221,23 +189,32 @@ namespace Restauracja.ViewModel
         //TODO: Instead of adding to ObservableCollection - Update the collection (initialize with
         private void AddSelectedProductToOrder()
         {
-            if (ToBeAdded != null)     
+            if (ToBeAdded != null)
             {
                 EnableDisablePlacingOrder(OrderProducts);
-
-                //Bug - Does not consider product quantity, and adds the same product as a new one with new quantity
-                if (!Order.Products.Contains(ToBeAdded))
-                {
-                    Order.Products.Add(ToBeAdded); // for data to be passed further
-                    OrderProducts.Add(ToBeAdded); // for display in this View
-                }
-                else
-                {
-                    ToBeAdded.Quantity++;
-                }
+                AddIncrementProduct();                
             }
             EnableDisablePlacingOrder(OrderProducts);
             UpdateSummaryCost();
+        }
+
+        private void AddIncrementProduct()
+        {
+            if (ProductExistsInOrder())
+            {
+                var product = OrderProducts.FirstOrDefault(prod => prod.Name == ToBeAdded.Name).Quantity++;
+            }
+            else
+            {
+                Order.Products.Add(ToBeAdded); // for data to be passed further
+                OrderProducts.Add(ToBeAdded); // for display in this View
+            }
+        }
+
+        private bool ProductExistsInOrder()
+        {
+            var existingInOrder = Order.Products.Where(product => product.Name == ToBeAdded.Name).ToList();
+            return existingInOrder.Any();
         }
 
         private void EnableDisablePlacingOrder(ObservableCollection<ProductPOCO> orderProducts)

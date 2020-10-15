@@ -17,11 +17,12 @@ namespace Restauracja.Utilities
             {
                 lock (padlock)
                 {
-                    if (instance is null)
-                    {
-                        instance = new SingleCustomer();
-                    }
-                    return instance;
+                    //if (instance is null)
+                    //{
+                    //    instance = new SingleCustomer();
+                    //}
+                    //return instance;
+                    return instance ?? (instance = new SingleCustomer());
                 }
             }
         }

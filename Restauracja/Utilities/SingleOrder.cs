@@ -22,13 +22,13 @@ namespace Restauracja.Utilities
             {
                 lock (padlock)
                 {
-                    if (instance == null)
-                    {
-                        instance = new SingleOrder();
-                    }
-                    return instance;
+                    //if (instance == null)
+                    //{
+                    //    instance = new SingleOrder();
+                    //}
+                    //return instance;
 
-                    //return instance ?? (instance = new SingleOrder());
+                    return instance ?? (instance = new SingleOrder());
 
                     // refactor to nullcoal op.
                 }

@@ -1,17 +1,10 @@
-﻿using Prism.Events;
-using Restauracja.Model;
+﻿using Restauracja.Model;
 using Restauracja.Model.Entities;
 using Restauracja.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using static Restauracja.ViewModel.MenuViewModel;
 
 namespace Restauracja.ViewModel
 {
@@ -48,7 +41,10 @@ namespace Restauracja.ViewModel
                 if (order != value)
                 {
                     SetProperty(ref order, value);
-                    SingleOrder.Instance.Order = value;
+                    if (value != null)
+                    {
+                        SingleOrder.Instance.Order = value;
+                    }
                 }
             }
         }
@@ -106,20 +102,20 @@ namespace Restauracja.ViewModel
                 SetProperty(ref orderCost, value);
             }
         }
-
-        public OrderSummaryViewModel(IEventAggregator eventAggregator)
+        
+        public OrderSummaryViewModel(OrderPOCO order = null )
         {
+            Order = order;
             Sender = SingleCustomer.Instance.Email;
 
             GetCachedData();
             OrderHistoryCommand = new CommandHandler(OpenOrderHistory, () => true);
             FinalizeOrderCommand = new CommandHandler(SaveOrderToDb, () => true);
-            eventAggregator.GetEvent<OrderMessageSentEvent>().Subscribe(OrderMessageReceived);
         }
 
         private void OpenOrderHistory()
         {
-            
+            // open History by command
         }
 
         public void GetCachedData()
@@ -130,14 +126,7 @@ namespace Restauracja.ViewModel
             if (SingleOrder.Instance.Order?.Products?.Count > 0)
                 OrderSummaryProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
 
-            //EnableDisablePlacingOrder(OrderProducts);
             Console.WriteLine("Got data from cache (ORDERSUMMARY_VM)!!!!!!!!!!!!!!");
-        }
-
-        private void OrderMessageReceived(OrderPOCO obj)
-        {
-            Order = obj;
-            OrderSummaryProducts = new ObservableCollection<ProductPOCO>(Order.Products);
         }
 
         protected virtual void OnOrderSaved()
