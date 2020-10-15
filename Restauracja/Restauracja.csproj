@@ -97,9 +97,16 @@
     <Compile Include="Model\ProductType.cs" />
     <Compile Include="Model\Soup.cs" />
     <Compile Include="RestaurantDataContext.cs" />
+    <Compile Include="RestaurantInitializer.cs" />
+    <Compile Include="Services\Logger.cs" />
     <Compile Include="Utilities\CommandHandler.cs" />
     <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Utilities\DbLogger.cs" />
     <Compile Include="Utilities\EmailValidator.cs" />
+    <Compile Include="Utilities\EventLogger.cs" />
+    <Compile Include="Utilities\FileLogger.cs" />
+    <Compile Include="Utilities\LogBase.cs" />
+    <Compile Include="Utilities\LogTarget.cs" />
     <Compile Include="Utilities\ProductFactory.cs" />
     <Compile Include="Utilities\SingleCustomer.cs" />
     <Compile Include="Utilities\SingleOrder.cs" />
