@@ -117,7 +117,6 @@ namespace Restauracja.ViewModel
             RemoveSelectedProductFromOrderCommand = new CommandHandler(RemoveSelectedProductFromOrder, () => true);
 
             PlaceOrderCommand = new CommandHandler(PlaceOrder, () => true);
-
             GetCachedData();
 
             GetProducts(ProductType.Pizza, POCOPizzas);
@@ -152,7 +151,7 @@ namespace Restauracja.ViewModel
                 case MessageBoxResult.Yes:
                     //Pass Order via DI
                     OrderSummaryViewModel = new OrderSummaryViewModel(Order);
-                    //Pass Order via event  
+
                     OnOrderPlaced();
                     MessageBox.Show(WELCOME_MESSAGE_CONTENT, WELCOME_MESSAGE_HEADER);
                     break;

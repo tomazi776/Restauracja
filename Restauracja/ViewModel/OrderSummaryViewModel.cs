@@ -20,7 +20,7 @@ namespace Restauracja.ViewModel
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         public ObservableCollection<ProductPOCO> OrderSummaryProducts
         {
-            get { return orderProducts; }
+            get => orderProducts;
             set
             {
                 if (orderProducts != value)
@@ -41,6 +41,8 @@ namespace Restauracja.ViewModel
                 if (order != value)
                 {
                     SetProperty(ref order, value);
+
+                    // protect from assigning null instead overloading with parameterless ctor
                     if (value != null)
                     {
                         SingleOrder.Instance.Order = value;
@@ -52,7 +54,7 @@ namespace Restauracja.ViewModel
         private bool sendEnabled;
         public bool SendEnabled
         {
-            get { return sendEnabled; }
+            get => sendEnabled;
             set 
             {
                 SetProperty(ref sendEnabled, value);
@@ -62,7 +64,7 @@ namespace Restauracja.ViewModel
         private string recipent;
         public string Recipent
         {
-            get { return recipent; }
+            get => recipent;
             set
             {
                 SetProperty(ref recipent, value);
@@ -72,7 +74,7 @@ namespace Restauracja.ViewModel
         private string sender;
         public string Sender
         {
-            get { return sender; }
+            get => sender;
             set
             {
                 if (sender != value)
@@ -86,7 +88,7 @@ namespace Restauracja.ViewModel
         private string emailBody;
         public string EmailBody
         {
-            get { return emailBody; }
+            get => emailBody;
             set
             {
                 SetProperty(ref emailBody, value);
@@ -96,7 +98,7 @@ namespace Restauracja.ViewModel
         private int orderCost;
         public int OrderCost
         {
-            get { return orderCost; }
+            get => orderCost;
             set
             {
                 SetProperty(ref orderCost, value);

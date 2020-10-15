@@ -16,7 +16,7 @@ namespace Restauracja.ViewModel
         private ObservableCollection<OrderItem> orderItems = new ObservableCollection<OrderItem>();
         public ObservableCollection<OrderItem> OrderItems
         {
-            get { return orderItems; }
+            get => orderItems;
             set
             {
                 SetProperty(ref orderItems, value);
@@ -26,7 +26,7 @@ namespace Restauracja.ViewModel
         private bool detailsDisplayed;
         public bool DetailsDisplayed
         {
-            get { return detailsDisplayed; }
+            get => detailsDisplayed;
             set
             {
                 SetProperty(ref detailsDisplayed, value);
@@ -36,7 +36,7 @@ namespace Restauracja.ViewModel
         private bool itemSelected;
         public bool ItemSelected
         {
-            get { return itemSelected; }
+            get => itemSelected;
             set
             {
                 SetProperty(ref itemSelected, value);
@@ -47,7 +47,7 @@ namespace Restauracja.ViewModel
         private FullOrderInfo order;
         public FullOrderInfo Order
         {
-            get { return order; }
+            get => order;
             set
             {
                 SetProperty(ref order, value);
