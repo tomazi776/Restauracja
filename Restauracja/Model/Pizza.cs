@@ -1,7 +1,4 @@
 ﻿
-
-using System;
-
 namespace Restauracja.Model
 {
     public class Pizza : ProductPOCO, IProduct

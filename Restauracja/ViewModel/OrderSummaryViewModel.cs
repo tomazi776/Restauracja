@@ -1,18 +1,11 @@
-﻿using Prism.Events;
-using Restauracja.Model;
+﻿using Restauracja.Model;
 using Restauracja.Model.Entities;
 using Restauracja.Services;
 using Restauracja.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using static Restauracja.ViewModel.MenuViewModel;
 
 namespace Restauracja.ViewModel
 {
@@ -21,14 +14,14 @@ namespace Restauracja.ViewModel
         public const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
         public event EventHandler<EventArgs> OrderSaved;
 
-        public ICommand SendMailCommand { get; }
+        public ICommand FinalizeOrderCommand { get; }
         public ICommand BackCommand { get;}
         public ICommand OrderHistoryCommand { get; set; }
 
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         public ObservableCollection<ProductPOCO> OrderSummaryProducts
         {
-            get { return orderProducts; }
+            get => orderProducts;
             set
             {
                 if (orderProducts != value)
@@ -49,7 +42,12 @@ namespace Restauracja.ViewModel
                 if (order != value)
                 {
                     SetProperty(ref order, value);
-                    SingleOrder.Instance.Order = value;
+
+                    // protect from assigning null instead overloading with parameterless ctor
+                    if (value != null)
+                    {
+                        SingleOrder.Instance.Order = value;
+                    }
                 }
             }
         }
@@ -57,7 +55,7 @@ namespace Restauracja.ViewModel
         private bool sendEnabled;
         public bool SendEnabled
         {
-            get { return sendEnabled; }
+            get => sendEnabled;
             set 
             {
                 SetProperty(ref sendEnabled, value);
@@ -67,7 +65,7 @@ namespace Restauracja.ViewModel
         private string recipent;
         public string Recipent
         {
-            get { return recipent; }
+            get => recipent;
             set
             {
                 SetProperty(ref recipent, value);
@@ -77,7 +75,7 @@ namespace Restauracja.ViewModel
         private string sender;
         public string Sender
         {
-            get { return sender; }
+            get => sender;
             set
             {
                 if (sender != value)
@@ -91,7 +89,7 @@ namespace Restauracja.ViewModel
         private string emailBody;
         public string EmailBody
         {
-            get { return emailBody; }
+            get => emailBody;
             set
             {
                 SetProperty(ref emailBody, value);
@@ -101,26 +99,26 @@ namespace Restauracja.ViewModel
         private int orderCost;
         public int OrderCost
         {
-            get { return orderCost; }
+            get => orderCost;
             set
             {
                 SetProperty(ref orderCost, value);
             }
         }
-
-        public OrderSummaryViewModel(IEventAggregator eventAggregator)
+        
+        public OrderSummaryViewModel(OrderPOCO order = null )
         {
-            Sender = SingleCustomer.GetInstance().Email;
+            Order = order;
+            Sender = SingleCustomer.Instance.Email;
 
             GetCachedData();
             OrderHistoryCommand = new CommandHandler(OpenOrderHistory, () => true);
-            //SendMailCommand = new CommandHandler(SendMail, () => true);
-            eventAggregator.GetEvent<OrderMessageSentEvent>().Subscribe(OrderMessageReceived);
+            FinalizeOrderCommand = new CommandHandler(SaveOrderToDb, () => true);
         }
 
         private void OpenOrderHistory()
         {
-            
+            // open History by command
         }
 
         public void GetCachedData()
@@ -131,16 +129,8 @@ namespace Restauracja.ViewModel
             if (SingleOrder.Instance.Order?.Products?.Count > 0)
                 OrderSummaryProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
 
-            //EnableDisablePlacingOrder(OrderProducts);
             Console.WriteLine("Got data from cache (ORDERSUMMARY_VM)!!!!!!!!!!!!!!");
         }
-
-        private void OrderMessageReceived(OrderPOCO obj)
-        {
-            Order = obj;
-            OrderSummaryProducts = new ObservableCollection<ProductPOCO>(Order.Products);
-        }
-
 
         protected virtual void OnOrderSaved()
         {
@@ -150,18 +140,13 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //TODO: Why make new order if its already made in MenuViewModel?
+        //TODO: Why make new order if its already made in MenuViewModel and sent here?
         // Cause its needed now to map an OrderPOCO to Order object
-        public void MakeOrder()
-        {
-            SaveOrderToDb();
-            OnOrderSaved();
-        }
-
         private void SaveOrderToDb()
         {
             using (var dbContext = new RestaurantDataContext())
             {
+                Sender = "urban776@gmail.com"; // for testing
                 Customer newCustomer = new Customer(Sender);
 
                 // Rethink having separate Entity and Domain objects (Order / OrderPOCO)
@@ -178,6 +163,7 @@ namespace Restauracja.ViewModel
                 try
                 {
                     dbContext.SaveChanges();
+                    OnOrderSaved();
                 }
                 catch (Exception ex)
                 {

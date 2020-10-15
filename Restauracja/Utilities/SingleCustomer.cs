@@ -4,26 +4,27 @@ namespace Restauracja.Utilities
 {
     public class SingleCustomer
     {
-        public int Id { get; set; }
         public string Email { get; set; }
 
-        private static SingleCustomer instance = new SingleCustomer();
+        private static SingleCustomer instance = null;
+        private static readonly object padlock = new object();
 
-        private SingleCustomer() 
-        {
-            if (instance != null)
-            {
-                throw new Exception("Use GetInstance() method to get the single instance of this class.");
-            }
-        }
+        private SingleCustomer() { }
 
-        public static SingleCustomer GetInstance()
+        public static SingleCustomer Instance
         {
-            if (instance == null)
+            get
             {
-                instance = new SingleCustomer();
+                lock (padlock)
+                {
+                    //if (instance is null)
+                    //{
+                    //    instance = new SingleCustomer();
+                    //}
+                    //return instance;
+                    return instance ?? (instance = new SingleCustomer());
+                }
             }
-            return instance;
         }
     }
 }

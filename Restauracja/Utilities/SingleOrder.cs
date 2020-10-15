@@ -12,10 +12,7 @@ namespace Restauracja.Utilities
     {
         public  ObservableCollection<ProductPOCO> OrderProducts { get; set; }
         public OrderPOCO Order { get; set; }
-        private SingleOrder()
-        {
-
-        }
+        private SingleOrder() { }
 
         private static SingleOrder instance = null;
         private static readonly object padlock = new object();
@@ -25,11 +22,15 @@ namespace Restauracja.Utilities
             {
                 lock (padlock)
                 {
-                    if (instance == null)
-                    {
-                        instance = new SingleOrder();
-                    }
-                    return instance;
+                    //if (instance == null)
+                    //{
+                    //    instance = new SingleOrder();
+                    //}
+                    //return instance;
+
+                    return instance ?? (instance = new SingleOrder());
+
+                    // refactor to nullcoal op.
                 }
             }
         }
