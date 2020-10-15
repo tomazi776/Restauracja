@@ -27,6 +27,10 @@ namespace Restauracja.Utilities
                         instance = new SingleOrder();
                     }
                     return instance;
+
+                    //return instance ?? (instance = new SingleOrder());
+
+                    // refactor to nullcoal op.
                 }
             }
         }

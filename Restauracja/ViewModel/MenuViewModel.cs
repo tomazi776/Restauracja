@@ -19,11 +19,7 @@ namespace Restauracja.ViewModel
         public ICommand AddSelectedProductToOrderCommand { get; set; }
         public ICommand RemoveSelectedProductFromOrderCommand { get; set; }
         public ICommand PlaceOrderCommand { get; set; }
-        IServiceLocator locator;
         private readonly IEventAggregator eventAggregator;
-
-        //public static IEventAggregator Ea { get; set; } = new EventAggregator();
-
 
         public const string WELCOME_MESSAGE_HEADER = "Zamówienie już prawie złożone!";
         public const string WELCOME_MESSAGE_CONTENT = "Teraz tylko podaj maila, w celu wysłania zamówienia, mniam!";
@@ -229,6 +225,7 @@ namespace Restauracja.ViewModel
             {
                 EnableDisablePlacingOrder(OrderProducts);
 
+                //Bug - Does not consider product quantity, and adds the same product as a new one with new quantity
                 if (!Order.Products.Contains(ToBeAdded))
                 {
                     Order.Products.Add(ToBeAdded); // for data to be passed further

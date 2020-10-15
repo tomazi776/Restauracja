@@ -15,18 +15,12 @@ namespace Restauracja
     /// </summary>
     public partial class App : Application
     {
-        //private IEventAggregator ea;
         public App()
         {
             InitializeComponent();
 
-            //this.ea = new EventAggregator();
-
             //UnityContainer unityContainer = new UnityContainer();
             //unityContainer.RegisterType<IEventAggregator, EventAggregatorService>();
-            //ServiceLocator.SetLocatorProvider(() => new Utilities.ServiceLocator());
-
-            //MainWindow = new MainWindow(ea);
         }
 
 

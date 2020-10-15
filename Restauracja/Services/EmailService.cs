@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
-namespace Restauracja.Utilities
+namespace Restauracja.Services
 {
     public class EmailService
     {

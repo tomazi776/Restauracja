@@ -10,7 +10,7 @@ namespace Restauracja.ViewModel
 {
     public class OrderHistoryViewModel : BaseViewModel
     {
-        public ICommand SelectOrderCommand { get; }
+        public ICommand SelectOrderDetailsCommand { get; }
         public List<FullOrderInfo> Orders { get; set; } = new List<FullOrderInfo>();
 
         private ObservableCollection<OrderItem> orderItems = new ObservableCollection<OrderItem>();
@@ -61,11 +61,11 @@ namespace Restauracja.ViewModel
 
         public OrderHistoryViewModel()
         {
-            GetOrderHistory();
-            SelectOrderCommand = new CommandHandler(SelectOrder, () => true);
+            GetAllOrders();
+            SelectOrderDetailsCommand = new CommandHandler(SelectOrderDetails, () => true);
         }
 
-        private void SelectOrder()
+        private void SelectOrderDetails()
         {
             if (!detailsDisplayed)
             {
@@ -74,7 +74,7 @@ namespace Restauracja.ViewModel
             }
         }
 
-        private void GetOrderHistory()
+        private void GetAllOrders()
         {
             using (var dbContext = new RestaurantDataContext())
             {
@@ -85,12 +85,12 @@ namespace Restauracja.ViewModel
             }
         }
 
-        private void GetOrderItems(string customerEmail)
+        private void GetOrderItems(string sender)
         {
             using (var dbContext = new RestaurantDataContext())
             {
                 var query = from item in dbContext.OrderItems
-                            where item.Order.Customer.CustomerEmail == customerEmail
+                            where item.Order.Customer.CustomerEmail == sender
                             where item.OrderId == Order.Id
                             select item;
                 var orderItemsList = query.ToList();

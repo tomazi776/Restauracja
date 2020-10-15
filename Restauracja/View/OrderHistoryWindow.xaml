@@ -76,7 +76,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button Content="Wyświetl szczegóły" Command="{Binding SelectOrderCommand}" Visibility="{Binding Path=ItemSelected, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left" Margin="96,372,0,0" VerticalAlignment="Top" Width="129" Height="73" Cursor="Hand"/>
+        <Button Content="Wyświetl szczegóły" Command="{Binding SelectOrderDetailsCommand}" Visibility="{Binding Path=ItemSelected, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left" Margin="96,372,0,0" VerticalAlignment="Top" Width="129" Height="73" Cursor="Hand"/>
 
     </Grid>
 </Window>

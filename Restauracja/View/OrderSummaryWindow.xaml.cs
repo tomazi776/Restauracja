@@ -1,5 +1,6 @@
 ﻿using Prism.Events;
 using Restauracja.Model;
+using Restauracja.Services;
 using Restauracja.Utilities;
 using Restauracja.ViewModel;
 using System;
