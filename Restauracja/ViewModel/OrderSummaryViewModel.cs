@@ -16,7 +16,6 @@ namespace Restauracja.ViewModel
 
         public ICommand FinalizeOrderCommand { get; }
         public ICommand BackCommand { get;}
-        public ICommand OrderHistoryCommand { get; set; }
 
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
         public ObservableCollection<ProductPOCO> OrderSummaryProducts
@@ -81,7 +80,7 @@ namespace Restauracja.ViewModel
                 if (sender != value)
                 {
                     SetProperty(ref sender, value);
-                    //SingleCustomer.GetInstance().Email = sender; //uncoment after testing
+                    SingleCustomer.Instance.Email = sender;
                 }
             }
         }
@@ -112,14 +111,9 @@ namespace Restauracja.ViewModel
             Sender = SingleCustomer.Instance.Email;
 
             GetCachedData();
-            OrderHistoryCommand = new CommandHandler(OpenOrderHistory, () => true);
             FinalizeOrderCommand = new CommandHandler(SaveOrderToDb, () => true);
         }
 
-        private void OpenOrderHistory()
-        {
-            // open History by command
-        }
 
         public void GetCachedData()
         {
@@ -140,16 +134,12 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //TODO: Why make new order if its already made in MenuViewModel and sent here?
-        // Cause its needed now to map an OrderPOCO to Order object
         private void SaveOrderToDb()
         {
             using (var dbContext = new RestaurantDataContext())
             {
-                Sender = "urban776@gmail.com"; // for testing
                 Customer newCustomer = new Customer(Sender);
 
-                // Rethink having separate Entity and Domain objects (Order / OrderPOCO)
                 Order newlyPlacedOrder = new Order(Order.FinalCost, Order.Description, DateTime.Now);
                 newlyPlacedOrder.Customer = newCustomer;
 
@@ -169,8 +159,6 @@ namespace Restauracja.ViewModel
                 {
                     Logger.Log(LogTarget.File, ex);
                     Logger.Log(LogTarget.EventLog, ex);
-
-                    // Handle cases of exceptions to inform user of the problem
                     MessageBox.Show(@"Could not save the order in the database - check 'Logs.txt' file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
                 }
             }

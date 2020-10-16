@@ -137,11 +137,11 @@ namespace Restauracja.ViewModel
             }
         }
 
-        // TODO: Use just events or EventAggregator
-        public event EventHandler<OrderEventArgs> OrderPlacedWithData;
+        //// TODO: Use just events or EventAggregator
+        //public event EventHandler<OrderEventArgs> OrderPlacedWithData;
 
-        // Expression-bodied member syntax with nullcheck
-        protected virtual void OnOrderPlacedWithData() => OrderPlacedWithData?.Invoke(this, new OrderEventArgs() { Order = Order });
+        //// Expression-bodied member syntax with nullcheck
+        //protected virtual void OnOrderPlacedWithData() => OrderPlacedWithData?.Invoke(this, new OrderEventArgs() { Order = Order });
 
         private void PlaceOrder()
         {
