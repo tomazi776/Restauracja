@@ -82,7 +82,7 @@ namespace Restauracja.View
             {
                 smtpClient.UseDefaultCredentials = true;
                 //smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, PassBox.SecurePassword);
-                smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, "Junior77");
+                smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, "ssss");
             }
             smtpClient.EnableSsl = true;
             smtpClient.Timeout = 10000;
