@@ -1,31 +1,36 @@
 ﻿using HtmlAgilityPack;
 using Restauracja.Model;
+using Restauracja.Utilities;
+using Restauracja.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Reflection;
+using System.Security;
 using System.Text;
+using System.Windows;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace Restauracja.Services
 {
     public class EmailService
     {
-        public const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
-        public const string GMAIL_SMTP_HOST = "smtp.gmail.com";
+        private const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
+        private const string GMAIL_SMTP_HOST = "smtp.gmail.com";
         public const int GMAIL_SMTP_PORT = 587;
 
-        public string Sender { get; set; }
-        public string Recipent { get; set; }
-        public OrderPOCO Order { get; set; }
-        public string Currency { get; set; } = CultureInfo.GetCultureInfo("pl-PL").NumberFormat.CurrencySymbol;
+        private string Sender { get; set; }
+        private OrderPOCO Order { get; set; }
+        private string Currency { get; set; } = CultureInfo.GetCultureInfo("pl-PL").NumberFormat.CurrencySymbol;
 
 
-        public EmailService(string sender, string recipent, OrderPOCO order)
+        public EmailService(string sender, OrderPOCO order)
         {
             Sender = sender;
-            Recipent = recipent;
             Order = order;
         }
 
@@ -48,6 +53,38 @@ namespace Restauracja.Services
                     return replacedHtml;
                 }
             }
+        }
+
+        public void SendEmail(OrderSummaryViewModel orderSummaryVm, string emailBodyInHtml, SecureString pass)
+        {
+            MailMessage email = new MailMessage(orderSummaryVm.Sender, orderSummaryVm.Recipent);
+            email.IsBodyHtml = true;
+            email.Body = emailBodyInHtml;
+            email.Subject = EMAIL_SUBJECT;
+
+            SmtpClient smtpClient = new SmtpClient(GMAIL_SMTP_HOST, GMAIL_SMTP_PORT);
+            if (orderSummaryVm.Sender != null && pass != null)
+            {
+                smtpClient.UseDefaultCredentials = true;
+                smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, pass);
+            }
+            smtpClient.EnableSsl = true;
+            smtpClient.Timeout = 10000;
+
+
+            smtpClient.Send(email);
+
+            //try
+            //{
+            //    smtpClient.Send(email);
+            //    MessageBox.Show($"Twoje zamówienie zostało zapisane i wysłane na email '{orderSummaryVm.Recipent}'", "Sukces!");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Logger.Log(LogTarget.File, ex);
+            //    Logger.Log(LogTarget.EventLog, ex);
+            //    MessageBox.Show(@"Could not send an email - ensure you have internet connection. If so - check Logs.txt file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
+            //}
         }
 
         private string ReplaceNodeAttribute(HtmlDocument doc, string attribute, string withId, string htmlTag, string attValue)

@@ -9,13 +9,23 @@ namespace Restauracja.Utilities
 {
     public class FileLogger : LogBase
     {
-        public const string fileName = "Logs.txt";
-        public readonly static string folderPath = Path.Combine(Environment.CurrentDirectory, @"Data\");
-        DirectoryInfo dir = Directory.CreateDirectory(folderPath);
-        public string filePath = Path.Combine(folderPath, fileName);
+        private readonly string fileName = "Logs.txt";
+        private readonly DateTime logDateTime;
+        //private static DirectoryInfo directory = Directory.Exists(Environment.CurrentDirectory + @"Data\Logs") ? Directory.CreateDirectory(@"Data\Logs");
+
+        private static DirectoryInfo directory = Directory.CreateDirectory(@"Data\Logs");
+        private string folderPath = Path.Combine(Environment.CurrentDirectory, directory.FullName);
+
+        //string pathToNewFolder = System.IO.Path.Combine(parentFolderPath, "NewSubFolder");
+        public FileLogger()
+        {
+            logDateTime = DateTime.Now;
+            fileName = String.Format("{0}_{1:dd_MM_yyyy H_mm}", "Logs", DateTime.Now) + ".txt";
+        }
 
         public override void Log(Exception exception)
         {
+            var filePath = Path.Combine(folderPath, fileName);
             using (StreamWriter streamWriter = new StreamWriter(filePath))
             {
                 var logInfo = BuildLogs(exception);

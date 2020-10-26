@@ -11,7 +11,6 @@ namespace Restauracja.ViewModel
 {
     public class OrderSummaryViewModel : BaseViewModel
     {
-        public const string EMAIL_SUBJECT = "Nowe zamówienie klienta";
         public event EventHandler<EventArgs> OrderSaved;
 
         public ICommand FinalizeOrderCommand { get; }

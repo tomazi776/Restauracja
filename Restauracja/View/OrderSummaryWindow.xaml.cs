@@ -42,12 +42,10 @@ namespace Restauracja.View
             this.Close();
         }
 
-        //Uncoment for enable/disable btn to work (commentd for testing)
         private void RecipentTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var viewModel = this.DataContext;
             var orderSummaryVm = viewModel as OrderSummaryViewModel;
-
             if (orderSummaryVm != null)
             {
                 orderSummaryVm.SendEnabled = EmailValidator.IsValidEmailAddress(RecipentTextBox.Text);
@@ -64,36 +62,48 @@ namespace Restauracja.View
                 return;
             }
 
-            EmailService emailService = new EmailService(orderSummaryVm.Sender, orderSummaryVm.Recipent, orderSummaryVm.Order);
+            //Add error handling for IO operation
+            EmailService emailService = new EmailService(orderSummaryVm.Sender, orderSummaryVm.Order);
             var emailBodyInHtml = emailService.GenerateEmail();
-
-            MailMessage email = new MailMessage(orderSummaryVm.Sender, orderSummaryVm.Recipent);
-            email.IsBodyHtml = true;
-            email.Body = emailBodyInHtml;
-            email.Subject = EmailService.EMAIL_SUBJECT;
-
-            SmtpClient smtpClient = new SmtpClient(EmailService.GMAIL_SMTP_HOST, EmailService.GMAIL_SMTP_PORT);
-            if (orderSummaryVm.Sender != null && PassBox.SecurePassword != null)
-            {
-                smtpClient.UseDefaultCredentials = true;
-                smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, PassBox.SecurePassword);
-            }
-            smtpClient.EnableSsl = true;
-            smtpClient.Timeout = 10000;
 
             try
             {
-                smtpClient.Send(email);
+                emailService.SendEmail(orderSummaryVm, emailBodyInHtml, PassBox.SecurePassword);
                 MessageBox.Show($"Twoje zamówienie zostało zapisane i wysłane na email '{orderSummaryVm.Recipent}'", "Sukces!");
             }
-            // handle timeout ex and authorization ex and connection ex, and log them
             catch (Exception ex)
             {
                 Logger.Log(LogTarget.File, ex);
                 Logger.Log(LogTarget.EventLog, ex);
-
                 MessageBox.Show(@"Could not send an email - ensure you have internet connection. If so - check Logs.txt file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
             }
+
+            //MailMessage email = new MailMessage(orderSummaryVm.Sender, orderSummaryVm.Recipent);
+            //email.IsBodyHtml = true;
+            //email.Body = emailBodyInHtml;
+            //email.Subject = EmailService.EMAIL_SUBJECT;
+
+            //SmtpClient smtpClient = new SmtpClient(EmailService.GMAIL_SMTP_HOST, EmailService.GMAIL_SMTP_PORT);
+            //if (orderSummaryVm.Sender != null && PassBox.SecurePassword != null)
+            //{
+            //    smtpClient.UseDefaultCredentials = true;
+            //    smtpClient.Credentials = new NetworkCredential(orderSummaryVm.Sender, PassBox.SecurePassword);
+            //}
+            //smtpClient.EnableSsl = true;
+            //smtpClient.Timeout = 10000;
+
+            //try
+            //{
+            //    smtpClient.Send(email);
+            //    MessageBox.Show($"Twoje zamówienie zostało zapisane i wysłane na email '{orderSummaryVm.Recipent}'", "Sukces!");
+            //}
+            //// handle timeout ex and authorization ex and connection ex, and log them
+            //catch (Exception ex)
+            //{
+            //    Logger.Log(LogTarget.File, ex);
+            //    Logger.Log(LogTarget.EventLog, ex);
+            //    MessageBox.Show(@"Could not send an email - ensure you have internet connection. If so - check Logs.txt file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
+            //}
         }
     }
 }

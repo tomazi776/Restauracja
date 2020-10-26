@@ -32,7 +32,7 @@ namespace Restauracja.Utilities
 
             while (innerException != null)
             {
-                exceptionBuilder.Append("Exception Type: ")
+                exceptionBuilder.Append("Inner Exception Type: ")
                     .Append(Environment.NewLine)
                     .Append(innerException.GetType().Name)
                     .Append(Environment.NewLine)
