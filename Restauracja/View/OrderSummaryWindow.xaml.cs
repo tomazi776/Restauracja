@@ -26,11 +26,6 @@ namespace Restauracja.View
                 return;
             }
 
-            //if (sender != null && sender is OrderSummaryViewModel summaryVm)
-            //{
-            //    summaryVm.OrderSaved += SendEmailOnOrderSaved;
-            //}
-
             orderSummaryVm.OrderSaved += SendEmailOnOrderSaved;
         }
 
