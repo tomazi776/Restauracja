@@ -84,7 +84,6 @@
       <DependentUpon>202009271354128_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="OrderEventArgs.cs" />
     <Compile Include="Model\Entities\Customer.cs" />
     <Compile Include="Model\Entities\OrderItem.cs" />
     <Compile Include="Model\FullOrderInfo.cs" />

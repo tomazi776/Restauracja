@@ -42,20 +42,6 @@ namespace Restauracja.ViewModel
         public List<IProduct> POCOSoups { get; set; } = new List<IProduct>();
         public List<IProduct> POCOBeverages { get; set; } = new List<IProduct>();
 
-        private bool tabSelected;
-
-        public bool TabSelected
-        {
-            get => tabSelected;
-            set 
-            {
-                if (tabSelected != value)
-                {
-                    SetProperty(ref tabSelected, value);
-                    ToBeAdded = null;
-                }
-            }
-        }
 
         private ProductPOCO toBeAdded;
         public ProductPOCO ToBeAdded
@@ -137,7 +123,7 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //// TODO: Use just events or EventAggregator
+        //// TODO: Using just events
         //public event EventHandler<OrderEventArgs> OrderPlacedWithData;
 
         //// Expression-bodied member syntax with nullcheck
@@ -170,7 +156,6 @@ namespace Restauracja.ViewModel
             Console.WriteLine("Got data from cache(MAIN_VM)!!!!!!!!!!!!!!");
         }
 
-        // Order.Products instead of OrderProducts
         public void UpdateSummaryCost()
         {
             Order.FinalCost = Order.GetOrderCost<ProductPOCO>(Order.Products);
@@ -185,7 +170,6 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //TODO: Instead of adding to ObservableCollection - Update the collection (initialize with
         private void AddSelectedProductToOrder()
         {
             if (ToBeAdded != null)
@@ -233,7 +217,6 @@ namespace Restauracja.ViewModel
             UpdateSummaryCost();
         }
 
-        //TODO: Get rid of second parameter, decide upon type
         private void GetProducts(ProductType productType, List<IProduct> products)
         {
             using (var myRestaurantContext = new RestaurantDataContext())
