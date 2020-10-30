@@ -1,4 +1,5 @@
-﻿using Restauracja.Model;
+﻿using Restauracja.Extensions;
+using Restauracja.Model;
 using Restauracja.Model.Entities;
 using Restauracja.Utilities;
 using System;
@@ -10,7 +11,7 @@ using System.Windows.Input;
 
 namespace Restauracja.ViewModel
 {
-    public partial class MenuViewModel : BaseViewModel
+    public partial class MenuViewModel : BaseViewModel, IWithCacheableData
     {
 
         public ICommand AddSelectedProductToOrderCommand { get; set; }
@@ -69,6 +70,8 @@ namespace Restauracja.ViewModel
             }
         }
 
+        public bool IsSameOrder { get; set; }
+
         private ProductPOCO toBeRemoved;
         public ProductPOCO ToBeRemoved
         {
@@ -103,7 +106,8 @@ namespace Restauracja.ViewModel
             RemoveSelectedProductFromOrderCommand = new CommandHandler(RemoveSelectedProductFromOrder, () => true);
 
             PlaceOrderCommand = new CommandHandler(PlaceOrder, () => true);
-            GetCachedData();
+            this.GetCatchedData();
+            EnableDisablePlacingOrder(OrderProducts);
 
             GetProducts(ProductType.Pizza, POCOPizzas);
             GetProducts(ProductType.PizzaTopping, POCOPizzaToppings);
@@ -123,12 +127,6 @@ namespace Restauracja.ViewModel
             }
         }
 
-        //// TODO: Using just events
-        //public event EventHandler<OrderEventArgs> OrderPlacedWithData;
-
-        //// Expression-bodied member syntax with nullcheck
-        //protected virtual void OnOrderPlacedWithData() => OrderPlacedWithData?.Invoke(this, new OrderEventArgs() { Order = Order });
-
         private void PlaceOrder()
         {
             MessageBoxResult result = MessageBox.Show(CONFIRMATION_PROMPT_CONTENT, CONFIRMATION_PROMPT_HEADER, MessageBoxButton.YesNo);
@@ -136,6 +134,7 @@ namespace Restauracja.ViewModel
             {
                 case MessageBoxResult.Yes:
                     //Pass Order via DI
+                    AssignOrderId(Order);
                     OrderSummaryViewModel = new OrderSummaryViewModel(Order);
 
                     OnOrderPlaced();
@@ -144,19 +143,25 @@ namespace Restauracja.ViewModel
             }
         }
 
-        public void GetCachedData()
+        private void AssignOrderId(OrderPOCO ord)
         {
-            if (SingleOrder.Instance.Order != null)
-                Order = SingleOrder.Instance.Order;
-
-            if (SingleOrder.Instance.Order?.Products?.Count > 0)
-                OrderProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
-
-            EnableDisablePlacingOrder(OrderProducts);
-            Console.WriteLine("Got data from cache(MAIN_VM)!!!!!!!!!!!!!!");
+            int lastOrderId = 0;
+            using (var dbContext = new RestaurantDataContext())
+            {
+                var orders = dbContext.Orders;
+                if (orders.Any())
+                {
+                    lastOrderId = orders.OrderByDescending(o => o.Id).Select(order => order).FirstOrDefault().Id;
+                }
+            }
+            ord.Id = lastOrderId;
+            if (IsSameOrder)
+                return;
+            else
+                ord.Id++;
         }
 
-        public void UpdateSummaryCost()
+        private void UpdateSummaryCost()
         {
             Order.FinalCost = Order.GetOrderCost<ProductPOCO>(Order.Products);
         }
@@ -183,7 +188,7 @@ namespace Restauracja.ViewModel
 
         private void AddIncrementProduct()
         {
-            if (ProductExistsInOrder())
+            if (ProductExistsInOrder(ToBeAdded))
             {
                 var product = OrderProducts.FirstOrDefault(prod => prod.Name == ToBeAdded.Name).Quantity++;
             }
@@ -191,12 +196,13 @@ namespace Restauracja.ViewModel
             {
                 Order.Products.Add(ToBeAdded); // for data to be passed further
                 OrderProducts.Add(ToBeAdded); // for display in this View
+                IsSameOrder = false;
             }
         }
 
-        private bool ProductExistsInOrder()
+        private bool ProductExistsInOrder(ProductPOCO productPoco)
         {
-            var existingInOrder = Order.Products.Where(product => product.Name == ToBeAdded.Name).ToList();
+            var existingInOrder = Order.Products.Where(product => product.Name == productPoco.Name).ToList();
             return existingInOrder.Any();
         }
 
@@ -212,6 +218,7 @@ namespace Restauracja.ViewModel
                 ToBeRemoved.Quantity = 1;
                 Order.Products.Remove(ToBeRemoved); // for data to be passed further passed
                 OrderProducts.Remove(ToBeRemoved); // for display in this View
+                IsSameOrder = false;
                 EnableDisablePlacingOrder(OrderProducts);
             }
             UpdateSummaryCost();

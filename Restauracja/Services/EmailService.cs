@@ -70,21 +70,7 @@ namespace Restauracja.Services
             }
             smtpClient.EnableSsl = true;
             smtpClient.Timeout = 10000;
-
-
-            smtpClient.Send(email);
-
-            //try
-            //{
-            //    smtpClient.Send(email);
-            //    MessageBox.Show($"Twoje zamówienie zostało zapisane i wysłane na email '{orderSummaryVm.Recipent}'", "Sukces!");
-            //}
-            //catch (Exception ex)
-            //{
-            //    Logger.Log(LogTarget.File, ex);
-            //    Logger.Log(LogTarget.EventLog, ex);
-            //    MessageBox.Show(@"Could not send an email - ensure you have internet connection. If so - check Logs.txt file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
-            //}
+            smtpClient.Send(email);          
         }
 
         private string ReplaceNodeAttribute(HtmlDocument doc, string attribute, string withId, string htmlTag, string attValue)

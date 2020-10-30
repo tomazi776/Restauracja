@@ -14,7 +14,7 @@
 
     </Window.Resources>
     <Grid>
-        <ListView HorizontalAlignment="Left" ItemsSource="{Binding OrderSummaryProducts, Mode=TwoWay}" Height="258" Margin="171,110,0,0" VerticalAlignment="Top" Width="322">
+        <ListView HorizontalAlignment="Left" ItemsSource="{Binding OrderProducts, Mode=TwoWay}" Height="258" Margin="171,110,0,0" VerticalAlignment="Top" Width="322">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Danie">

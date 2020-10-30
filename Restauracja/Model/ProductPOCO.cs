@@ -4,7 +4,6 @@ namespace Restauracja.Model
 {
     public abstract class ProductPOCO : BaseViewModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
         public ProductType ProductType { get; set; }
@@ -29,11 +28,6 @@ namespace Restauracja.Model
             Quantity = quantity;
             Description = description;
             Remarks = remarks;
-        }
-
-        public override string ToString()
-        {
-            return Name.ToString();
         }
     }
 }

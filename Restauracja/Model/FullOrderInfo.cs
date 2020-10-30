@@ -8,12 +8,8 @@ namespace Restauracja.Model
         public string CustomerName { get; set; }
         public decimal FinalCost { get; set; }
         public string Description { get; set; }
+        public string Sent { get; set; }
         public DateTime Date { get; set; }
         public FullOrderInfo() { }
-
-        public override string ToString()
-        {
-            return CustomerName.ToString();
-        }
     }
 }

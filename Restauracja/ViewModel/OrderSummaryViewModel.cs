@@ -1,15 +1,19 @@
-﻿using Restauracja.Model;
+﻿using Restauracja.Extensions;
+using Restauracja.Model;
 using Restauracja.Model.Entities;
 using Restauracja.Services;
 using Restauracja.Utilities;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Security;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace Restauracja.ViewModel
 {
-    public class OrderSummaryViewModel : BaseViewModel
+    public class OrderSummaryViewModel : BaseViewModel, IWithCacheableData
     {
         public event EventHandler<EventArgs> OrderSaved;
 
@@ -17,7 +21,7 @@ namespace Restauracja.ViewModel
         public ICommand BackCommand { get;}
 
         private ObservableCollection<ProductPOCO> orderProducts = new ObservableCollection<ProductPOCO>();
-        public ObservableCollection<ProductPOCO> OrderSummaryProducts
+        public ObservableCollection<ProductPOCO> OrderProducts
         {
             get => orderProducts;
             set
@@ -37,15 +41,11 @@ namespace Restauracja.ViewModel
             get { return order; }
             set
             {
-                if (order != value)
+                // protect from assigning null instead overloading with parameterless ctor
+                if (order != value && value != null)
                 {
                     SetProperty(ref order, value);
-
-                    // protect from assigning null instead overloading with parameterless ctor
-                    if (value != null)
-                    {
-                        SingleOrder.Instance.Order = value;
-                    }
+                    SingleOrder.Instance.Order = value;
                 }
             }
         }
@@ -83,46 +83,78 @@ namespace Restauracja.ViewModel
                 }
             }
         }
-
-        private string emailBody;
-        public string EmailBody
-        {
-            get => emailBody;
-            set
-            {
-                SetProperty(ref emailBody, value);
-            }
-        }
-
-        private int orderCost;
-        public int OrderCost
-        {
-            get => orderCost;
-            set
-            {
-                SetProperty(ref orderCost, value);
-            }
-        }
         
         public OrderSummaryViewModel(OrderPOCO order = null )
         {
             Order = order;
             Sender = SingleCustomer.Instance.Email;
+            var summaryProds = OrderProducts;
 
-            GetCachedData();
-            FinalizeOrderCommand = new CommandHandler(SaveOrderToDb, () => true);
+            this.GetCatchedData();
+            FinalizeOrderCommand = new CommandHandler(TrySaveOrderToDb, () => true);
         }
 
-
-        public void GetCachedData()
+        public void TrySendEmail(SecureString pass)
         {
-            if (SingleOrder.Instance.Order != null)
-                Order = SingleOrder.Instance.Order;
+            EmailService emailService = new EmailService(Sender, Order);
+            string emailBodyInHtml = TryGenerateEmail(emailService);
+            try
+            {
+                emailService.SendEmail(this, emailBodyInHtml, pass);
+                UpdateOrder(orderSent: true);
+                MessageBox.Show($"Twoje zamówienie zostało zapisane i wysłane na email '{Recipent}'", "Sukces!");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogTarget.File, ex);
+                Logger.Log(LogTarget.EventLog, ex);
+                UpdateOrder(orderSent: false);
+                MessageBox.Show(@"Could not send an email - ensure you have internet connection. If so - check Logs.txt file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
+            }
+        }
 
-            if (SingleOrder.Instance.Order?.Products?.Count > 0)
-                OrderSummaryProducts = new ObservableCollection<ProductPOCO>(SingleOrder.Instance.Order.Products);
+        private void TrySaveOrderToDb()
+        {
+            if (IsSameAsLastOrderId())
+            {
+                UpdateOrder(orderSent:true);
+                OnOrderSaved();
+                return;
+            }
 
-            Console.WriteLine("Got data from cache (ORDERSUMMARY_VM)!!!!!!!!!!!!!!");
+            using (var dbContext = new RestaurantDataContext())
+            {
+                try
+                {
+                    CreateNewOrder(dbContext);
+                    dbContext.SaveChanges();
+                    OnOrderSaved();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(LogTarget.File, ex);
+                    Logger.Log(LogTarget.EventLog, ex);
+                    MessageBox.Show(@"Could not save the order in the database - check 'Logs.txt' file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
+                }
+            }
+        }
+
+        private bool IsSameAsLastOrderId()
+        {
+            using (var dbContext = new RestaurantDataContext())
+            {
+                Order lastOrder = null;
+                var orders = dbContext.Orders;
+                if (orders.Any())
+                {
+                     lastOrder = dbContext.Orders.OrderByDescending(o => o.Id).Select(order => order).FirstOrDefault();
+                }
+                else
+                {
+                    return false;
+                }
+                return lastOrder.Id == Order.Id;
+            }
         }
 
         protected virtual void OnOrderSaved()
@@ -133,33 +165,46 @@ namespace Restauracja.ViewModel
             }
         }
 
-        private void SaveOrderToDb()
+        private void CreateNewOrder(RestaurantDataContext dataContext)
+        {
+            Order order = new Order(new Customer(Sender), Order.FinalCost, Order.Description, DateTime.Now);
+            AddProductsTo(order);
+            dataContext.Orders.Add(order);
+        }
+
+        private string TryGenerateEmail(EmailService emailService)
+        {
+            try
+            {
+                var emailBodyInHtml = emailService.GenerateEmail();
+                return emailBodyInHtml;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogTarget.File, ex);
+                Logger.Log(LogTarget.EventLog, ex);
+                MessageBox.Show(@"Error while generating email - check Logs.txt file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
+                throw;
+            }
+        }
+
+        private void UpdateOrder(bool orderSent)
         {
             using (var dbContext = new RestaurantDataContext())
             {
-                Customer newCustomer = new Customer(Sender);
+                var currentOrder = dbContext.Orders.OrderByDescending(o => o.Id).Select(order => order).FirstOrDefault();
+                currentOrder.Sent = orderSent? 1 : 0;
+                currentOrder.Description = SingleOrder.Instance.Order.Description;
+                dbContext.SaveChanges();
+            }
+        }
 
-                Order newlyPlacedOrder = new Order(Order.FinalCost, Order.Description, DateTime.Now);
-                newlyPlacedOrder.Customer = newCustomer;
-
-                foreach (var prod in OrderSummaryProducts)
-                {
-                    var orderItem = MapToOrderItem(prod);
-                    newlyPlacedOrder.OrderItem.Add(orderItem);
-                }
-                dbContext.Orders.Add(newlyPlacedOrder);
-
-                try
-                {
-                    dbContext.SaveChanges();
-                    OnOrderSaved();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log(LogTarget.File, ex);
-                    Logger.Log(LogTarget.EventLog, ex);
-                    MessageBox.Show(@"Could not save the order in the database - check 'Logs.txt' file in '\Data' installation foler or in Windows Event Viewer for details.", "Error!");
-                }
+        private void AddProductsTo(Order order)
+        {
+            foreach (var prod in OrderProducts)
+            {
+                var orderItem = MapToOrderItem(prod);
+                order.OrderItem.Add(orderItem);
             }
         }
 

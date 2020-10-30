@@ -79,9 +79,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Extensions\ViewModelExtensions.cs" />
     <Compile Include="Migrations\202009271354128_Initial.cs" />
     <Compile Include="Migrations\202009271354128_Initial.designer.cs">
       <DependentUpon>202009271354128_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202010281140420_AddSent.cs" />
+    <Compile Include="Migrations\202010281140420_AddSent.designer.cs">
+      <DependentUpon>202010281140420_AddSent.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Entities\Customer.cs" />
@@ -104,6 +109,7 @@
     <Compile Include="Utilities\EmailValidator.cs" />
     <Compile Include="Utilities\EventLogger.cs" />
     <Compile Include="Utilities\FileLogger.cs" />
+    <Compile Include="Utilities\IWithCacheableData.cs" />
     <Compile Include="Utilities\LogBase.cs" />
     <Compile Include="Utilities\LogTarget.cs" />
     <Compile Include="Utilities\ProductFactory.cs" />
@@ -160,6 +166,9 @@
     </Compile>
     <EmbeddedResource Include="Migrations\202009271354128_Initial.resx">
       <DependentUpon>202009271354128_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010281140420_AddSent.resx">
+      <DependentUpon>202010281140420_AddSent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

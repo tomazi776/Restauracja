@@ -163,10 +163,10 @@
             </TabItem>
         </TabControl>
 
-        <TextBlock x:Name="ToBeAddedTextBlock" TextWrapping="Wrap" Text="{Binding ToBeAdded}" HorizontalAlignment="Left" Margin="381,174,0,0" VerticalAlignment="Top" Height="58" Width="144"/>
+        <TextBlock x:Name="ToBeAddedTextBlock" TextWrapping="Wrap" Text="{Binding ToBeAdded.Name}" HorizontalAlignment="Left" Margin="381,174,0,0" VerticalAlignment="Top" Height="58" Width="144"/>
         <Button x:Name="DodajButton" Content="Dodaj" HorizontalAlignment="Left" Margin="404,256,0,0" VerticalAlignment="Top" Width="92" Command="{Binding AddSelectedProductToOrderCommand}" Height="32"/>
 
-        <TextBlock x:Name="ToBeRemovedTextBlock" TextWrapping="Wrap" Text="{Binding ToBeRemoved}" HorizontalAlignment="Left" Margin="381,358,0,0" VerticalAlignment="Top" Height="55" Width="144"/>
+        <TextBlock x:Name="ToBeRemovedTextBlock" TextWrapping="Wrap" Text="{Binding ToBeRemoved.Name}" HorizontalAlignment="Left" Margin="381,358,0,0" VerticalAlignment="Top" Height="55" Width="144"/>
         <Button x:Name="UsunButton" Content="Usuń" HorizontalAlignment="Left" Margin="404,433,0,0" VerticalAlignment="Top" Width="92" Height="34" Command="{Binding RemoveSelectedProductFromOrderCommand}"/>
 
         <Label Content="Twoje zamówienie:" FontWeight="DemiBold" Foreground="DarkRed" HorizontalAlignment="Left" Margin="668,53,0,0" VerticalAlignment="Top"/>

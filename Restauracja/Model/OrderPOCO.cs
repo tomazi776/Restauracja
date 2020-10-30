@@ -33,17 +33,7 @@ namespace Restauracja.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
 
-        //protected bool SetProperty<T>(ref T backingField, T value, [CallerMemberName] string property = null)
-        //{
-        //    if (EqualityComparer<T>.Default.Equals(backingField, value))
-        //        return false;
 
-        //    backingField = value;
-        //    RaisePropertyChanged(property);
-        //    return true;
-        //}
-
-        // Order.Products instead of OrderProducts
         public decimal GetOrderCost<ProductPOCO>(List<Model.ProductPOCO> orderSummaryProducts)
         {
             decimal orderCost = 0;

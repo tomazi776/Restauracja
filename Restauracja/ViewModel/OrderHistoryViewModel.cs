@@ -79,8 +79,7 @@ namespace Restauracja.ViewModel
             using (var dbContext = new RestaurantDataContext())
             {
                 var query = from order in dbContext.Orders
-                            join customer in dbContext.Customers on order.Id equals customer.Customer_Id
-                            select new FullOrderInfo{Id = customer.Customer_Id, CustomerName = customer.CustomerEmail, Date = order.Date, FinalCost = order.FinalCost, Description = order.Description };
+                            select new FullOrderInfo { Id = order.Id, CustomerName = order.Customer.CustomerEmail, Date = order.Date, FinalCost = order.FinalCost, Description = order.Description, Sent = order.Sent == 1? "Tak" : "Nie" };
                 Orders = query.ToList();
             }
         }
